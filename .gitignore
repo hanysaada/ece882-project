@@ -1,0 +1,52 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# perf raw data (large blobs — commit the derived .folded / .svg instead)
+*.data
+*.data.old
+perf.data*
+
+# compiled / simulation artifacts
+*.so
+*.o
+*.out
+*.vvp
+*.vcd
+*.fst
+hw/sim/obj_dir/
+
+# editor / OS
+.DS_Store
+*.swp
+
+# FlameGraph is cloned by scripts/setup_env.sh, not vendored
+tools/FlameGraph/
+
+# C extension build products (rebuilt by hw/sw/setup.py)
+hw/sw/build/
+hw/sw/*.so
+*.egg-info/
+
+# ---------------------------------------------------------------------------
+# Working files kept locally but NOT submitted. These are scaffolding for how
+# the project was built, not project deliverables:
+#   CLAUDE.md        instructions to the AI assistant
+#   docs/reference/  the assignment PDF and the planning guides
+# The AI usage itself is disclosed in prompt.txt, which IS a required
+# deliverable -- these files are simply not part of the submission.
+# ---------------------------------------------------------------------------
+CLAUDE.md
+docs/reference/
+
+# Teaching notes written while learning the material. Useful to us, not
+# deliverables: the assignment asks for the understanding in report_*.txt, in our
+# own words, which is where it is actually graded.
+docs/
+
+# Development-time guardrail: it existed to stop us citing host numbers while we
+# worked on two machines. The submitted repo contains only VM data, so it
+# documents a problem that no longer exists.
+results/README.md
