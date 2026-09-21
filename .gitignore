@@ -41,10 +41,11 @@ hw/sw/*.so
 CLAUDE.md
 docs/reference/
 
-# Teaching notes written while learning the material. Useful to us, not
-# deliverables: the assignment asks for the understanding in report_*.txt, in our
-# own words, which is where it is actually graded.
-docs/
+# NOTE: docs/ was previously ignored on the grounds that the graded understanding
+# belongs in report_*.txt. That was the wrong call. The reports state conclusions;
+# these notes carry the reasoning, the dead ends and the mechanisms behind them, and
+# the project is graded on a live viva as much as on the written result. They are
+# tracked. Only docs/reference/ stays out, above.
 
 # Development-time guardrail: it existed to stop us citing host numbers while we
 # worked on two machines. The submitted repo contains only VM data, so it
