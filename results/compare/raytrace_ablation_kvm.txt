@@ -1,0 +1,41 @@
+# Ablation table for raytrace
+# Variants are cumulative: each row adds ONE change to the row above.
+# 'vs baseline' is the total so far; 'vs previous' is THIS change alone.
+# processes=20 values=3 interpreter=Python 3.10.12
+
+================================================================
+VARIANT: raytrace_v1_noguards
+----------------------------------------------------------------
+vs BASELINE (cumulative effect of all changes up to here):
+Mean +- std dev: [raytrace_base_kvm] 379 ms +- 44 ms -> [raytrace_v1_noguards_kvm] 343 ms +- 31 ms: 1.10x faster
+
+vs PREVIOUS (baseline) — the contribution of THIS change alone:
+Mean +- std dev: [raytrace_base_kvm] 379 ms +- 44 ms -> [raytrace_v1_noguards_kvm] 343 ms +- 31 ms: 1.10x faster
+
+================================================================
+VARIANT: raytrace_v2_slots
+----------------------------------------------------------------
+vs BASELINE (cumulative effect of all changes up to here):
+Mean +- std dev: [raytrace_base_kvm] 379 ms +- 44 ms -> [raytrace_v2_slots_kvm] 303 ms +- 15 ms: 1.25x faster
+
+vs PREVIOUS (raytrace_v1_noguards) — the contribution of THIS change alone:
+Mean +- std dev: [raytrace_v1_noguards_kvm] 343 ms +- 31 ms -> [raytrace_v2_slots_kvm] 303 ms +- 15 ms: 1.13x faster
+
+================================================================
+VARIANT: raytrace_v3_radius2
+----------------------------------------------------------------
+vs BASELINE (cumulative effect of all changes up to here):
+Mean +- std dev: [raytrace_base_kvm] 379 ms +- 44 ms -> [raytrace_v3_radius2_kvm] 305 ms +- 23 ms: 1.24x faster
+
+vs PREVIOUS (raytrace_v2_slots) — the contribution of THIS change alone:
+Benchmark hidden because not significant (1): raytrace
+
+================================================================
+VARIANT: raytrace_v4_inline
+----------------------------------------------------------------
+vs BASELINE (cumulative effect of all changes up to here):
+Mean +- std dev: [raytrace_base_kvm] 379 ms +- 44 ms -> [raytrace_v4_inline_kvm] 236 ms +- 10 ms: 1.61x faster
+
+vs PREVIOUS (raytrace_v3_radius2) — the contribution of THIS change alone:
+Mean +- std dev: [raytrace_v3_radius2_kvm] 305 ms +- 23 ms -> [raytrace_v4_inline_kvm] 236 ms +- 10 ms: 1.29x faster
+
