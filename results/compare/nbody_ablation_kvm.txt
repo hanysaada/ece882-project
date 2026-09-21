@@ -1,0 +1,41 @@
+# Ablation table for nbody
+# Variants are cumulative: each row adds ONE change to the row above.
+# 'vs baseline' is the total so far; 'vs previous' is THIS change alone.
+# processes=60 values=5 interpreter=Python 3.10.12
+
+================================================================
+VARIANT: nbody_v1_sqrt
+----------------------------------------------------------------
+vs BASELINE (cumulative effect of all changes up to here):
+Benchmark hidden because not significant (1): nbody
+
+vs PREVIOUS (baseline) — the contribution of THIS change alone:
+Benchmark hidden because not significant (1): nbody
+
+================================================================
+VARIANT: nbody_v2_localsqrt
+----------------------------------------------------------------
+vs BASELINE (cumulative effect of all changes up to here):
+Benchmark hidden because not significant (1): nbody
+
+vs PREVIOUS (nbody_v1_sqrt) — the contribution of THIS change alone:
+Benchmark hidden because not significant (1): nbody
+
+================================================================
+VARIANT: nbody_v3_slicewrite
+----------------------------------------------------------------
+vs BASELINE (cumulative effect of all changes up to here):
+Mean +- std dev: [nbody_base_kvm] 101 ms +- 7 ms -> [nbody_v3_slicewrite_kvm] 102 ms +- 5 ms: 1.01x slower
+
+vs PREVIOUS (nbody_v2_localsqrt) — the contribution of THIS change alone:
+Mean +- std dev: [nbody_v2_localsqrt_kvm] 101 ms +- 4 ms -> [nbody_v3_slicewrite_kvm] 102 ms +- 5 ms: 1.01x slower
+
+================================================================
+VARIANT: nbody_v4_struct
+----------------------------------------------------------------
+vs BASELINE (cumulative effect of all changes up to here):
+Mean +- std dev: [nbody_base_kvm] 101 ms +- 7 ms -> [nbody_v4_struct_kvm] 89.9 ms +- 2.5 ms: 1.12x faster
+
+vs PREVIOUS (nbody_v3_slicewrite) — the contribution of THIS change alone:
+Mean +- std dev: [nbody_v3_slicewrite_kvm] 102 ms +- 5 ms -> [nbody_v4_struct_kvm] 89.9 ms +- 2.5 ms: 1.13x faster
+

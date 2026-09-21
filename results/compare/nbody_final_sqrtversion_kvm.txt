@@ -1,0 +1,45 @@
+# FINAL comparison for nbody
+# 3 interleaved rounds of (baseline, optimized); -p 60 -n 5
+# interpreter: Python 3.10.12  (release build, asserted above)
+
++-----------+----------------------+----------------------+
+| Benchmark | nbody_final_base_kvm | nbody_final_opt_kvm  |
++===========+======================+======================+
+| nbody     | 101 ms               | 101 ms: 1.01x faster |
++-----------+----------------------+----------------------+
+
+--- baseline stats ---
+Raw value minimum: 93.0 ms
+Raw value maximum: 416 ms
+Number of run with values: 180
+Total number of run: 183
+Minimum:         93.0 ms
+Median +- MAD:   101 ms +- 2 ms
+Mean +- std dev: 101 ms +- 7 ms
+Maximum:         208 ms
+  0th percentile: 93.0 ms (-8% of the mean) -- minimum
+  5th percentile: 95.3 ms (-6% of the mean)
+ 25th percentile: 98.3 ms (-3% of the mean) -- Q1
+ 50th percentile: 101 ms (-1% of the mean) -- median
+ 75th percentile: 103 ms (+1% of the mean) -- Q3
+ 95th percentile: 108 ms (+7% of the mean)
+100th percentile: 208 ms (+105% of the mean) -- maximum
+* the maximum (208 ms) is 105% greater than the mean (101 ms)
+
+--- optimized stats ---
+Raw value minimum: 189 ms
+Raw value maximum: 392 ms
+Number of run with values: 180
+Total number of run: 183
+Minimum:         94.6 ms
+Median +- MAD:   99.9 ms +- 1.7 ms
+Mean +- std dev: 101 ms +- 5 ms
+Maximum:         196 ms
+  0th percentile: 94.6 ms (-6% of the mean) -- minimum
+  5th percentile: 96.3 ms (-4% of the mean)
+ 25th percentile: 98.2 ms (-2% of the mean) -- Q1
+ 50th percentile: 99.9 ms (-1% of the mean) -- median
+ 75th percentile: 102 ms (+1% of the mean) -- Q3
+ 95th percentile: 107 ms (+6% of the mean)
+100th percentile: 196 ms (+95% of the mean) -- maximum
+* the maximum (196 ms) is 95% greater than the mean (101 ms)
