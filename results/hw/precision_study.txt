@@ -1,0 +1,71 @@
+==============================================================================
+PRECISION STUDY — nbody, 2000 steps, dt = 0.01
+==============================================================================
+
+Energy is the benchmark's own correctness measure. Gravity conserves
+it, so drift away from the initial value is pure numerical error.
+
+    step      binary64 ref        b32 kernel    b32 kernel+state
+------------------------------------------------------------------------------
+       0   -0.169075163829   -0.169075163829   -0.169075163829
+     333   -0.169011791839   -0.169011791072   -0.169009198055
+     666   -0.169046207861   -0.169046206528   -0.169043640703
+     999   -0.169087582842   -0.169087582182   -0.169086683463
+    1332   -0.169034711944   -0.169034711825   -0.169034099779
+    1665   -0.169017485876   -0.169017482835   -0.169014656700
+    1998   -0.169071294204   -0.169071291176   -0.169068990353
+    2000   -0.169071606870   -0.169071603796   -0.169069331519
+
+Relative drift from each configuration's own initial energy:
+configuration                                     |dE/E0|
+------------------------------------------------------------
+binary64 reference                              2.104e-05
+accel binary32 kernel, binary64 state           2.106e-05
+accel binary32 kernel AND binary32 state        3.450e-05
+
+Final energy difference against the binary64 reference:
+  accel binary32 kernel, binary64 state         1.818e-08 relative
+  accel binary32 kernel AND binary32 state      1.346e-05 relative
+
+==============================================================================
+READING THIS RESULT
+==============================================================================
+
+binary32 has a 24-bit significand, so its relative epsilon is about 1.2e-7,
+against 2.2e-16 for binary64. Roughly nine decimal digits of headroom are given
+up, and in a timestepping integrator that error does not merely appear once: each
+step's rounding perturbs the state that the next step reads.
+
+The two accelerator rows separate the two places precision can be lost:
+
+  * "b32 kernel, b64 state" keeps positions and velocities in double and only
+    computes the force factor in single. The engine converts on the way in and
+    out, so it costs conversion logic and twice the DMA bandwidth per body.
+
+  * "b32 kernel AND b32 state" stores the body array as float32 as well, which
+    is the cheap design: the DMA engine streams memory straight through the
+    pipeline with no conversion at all.
+
+If the second row is much worse than the first, the problem is the ACCUMULATION
+of state, not the kernel arithmetic, and the right fix is to keep state in
+binary64 while leaving the kernel in binary32 -- which is cheap, because
+accumulate-in-wide-precision is a standard pattern (it is what a TPU does:
+8-bit multiplies into 32-bit accumulators).
+
+OPTIONS, with their costs:
+
+  1. Accept binary32 and state the drift. Cheapest silicon. Defensible ONLY if
+     you report the number, as above.
+  2. binary32 multipliers with binary64 accumulation. Roughly the TPU pattern.
+     Modest area increase, keeps the wide adder off the critical multiply path.
+  3. Full binary64 datapath. A binary64 multiplier is roughly 2.5-3x the area of
+     a binary32 one (the partial-product array scales with the square of the
+     significand width: 53x53 versus 24x24) and needs a deeper pipeline to hold
+     the same frequency, so f_max drops or latency grows.
+  4. Two-pass binary32 (compensated / Kahan-style summation) to recover much of
+     the lost precision using extra cycles rather than extra width. Cheap in
+     area, costs throughput.
+
+The point to make in the presentation is that this was MEASURED on the
+benchmark's real trajectory, not assumed.
+
