@@ -1,0 +1,6 @@
+# Noise floor for raytrace
+# Two runs of IDENTICAL baseline code. Any difference is measurement
+# noise, not a real effect. An optimization must beat this to count.
+# processes=20 values=3  interpreter=Python 3.10.12
+
+Benchmark hidden because not significant (1): raytrace

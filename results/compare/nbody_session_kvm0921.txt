@@ -1,0 +1,9 @@
+# nbody session log, tag kvm0921. Same boot_id on every line = same boot.
+# nproc=2 root=vda Python 3.10.12 opt_md5=b651647ee14271b91d66dd6f39549226
+2026-09-21T09:22:09Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  uptime=1065.24s  load=0.00 0.24 0.24  | session start
+2026-09-21T09:22:13Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  uptime=1069.34s  load=0.08 0.26 0.25  | sampling assertion: 3000 cycles samples in 3 s
+2026-09-21T09:22:13Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  uptime=1069.35s  load=0.08 0.26 0.25  | NOISE FLOOR start (run_baseline.sh, -p 60 -n 5)
+2026-09-21T09:25:05Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  uptime=1241.24s  load=0.97 0.62 0.40  | NOISE FLOOR end
+2026-09-21T09:25:05Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  uptime=1241.25s  load=0.97 0.62 0.40  | GATE PASSED: noise floor not significant -> running run_final.sh
+2026-09-21T09:25:05Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  uptime=1241.26s  load=0.97 0.62 0.40  | FINAL start (run_final.sh, 3 interleaved rounds, -p 60 -n 5)
+2026-09-21T09:31:48Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  uptime=1644.54s  load=1.06 0.93 0.63  | FINAL end (run_final.sh exit 0)
