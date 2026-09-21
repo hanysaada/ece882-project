@@ -1,0 +1,8 @@
+2026-09-21T09:44:39Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  load=0.00 0.06 0.25  | start; nproc=2
+  base energy -0.16908926275527172
+  v4   energy -0.16908926275527195  rel diff 1.313e-15  PASS
+  v5   energy -0.16908926275526784  rel diff 2.298e-14  PASS
+2026-09-21T09:44:39Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  load=0.00 0.06 0.25  | round 1/3
+2026-09-21T09:47:52Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  load=1.05 0.55 0.41  | round 2/3
+2026-09-21T09:51:37Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  load=1.06 0.81 0.55  | round 3/3
+2026-09-21T09:54:52Z  boot_id=1803e111-050c-4228-b4b8-24eaf36b491d  load=1.00 0.91 0.65  | done

@@ -1,0 +1,17 @@
+# nbody v5_struct_sqrt ablation row -- SAME SESSION, interleaved (base, v4, v5) x3
+# -p 60 -n 5, 2 vCPU, Python 3.10.12; session log: nbody_v5_session_kvm0921v5.txt
+
+## all three
++-----------+----------------------------+--------------------------+--------------------------+
+| Benchmark | nbody_v5cmp_base_kvm0921v5 | nbody_v5cmp_v4_kvm0921v5 | nbody_v5cmp_v5_kvm0921v5 |
++===========+============================+==========================+==========================+
+| nbody     | 105 ms                     | 95.9 ms: 1.10x faster    | 97.1 ms: 1.08x faster    |
++-----------+----------------------------+--------------------------+--------------------------+
+
+## v5 vs v4 -- the contribution of adding sqrt ON TOP OF v4
+Mean +- std dev: [nbody_v5cmp_v4_kvm0921v5] 95.9 ms +- 7.8 ms -> [nbody_v5cmp_v5_kvm0921v5] 97.1 ms +- 4.8 ms: 1.01x slower
+
+## medians
+  nbody_v5cmp_base_kvm0921v5.json  Median +- MAD:   103 ms +- 3 ms
+  nbody_v5cmp_v4_kvm0921v5.json    Median +- MAD:   94.6 ms +- 2.7 ms
+  nbody_v5cmp_v5_kvm0921v5.json    Median +- MAD:   96.3 ms +- 2.3 ms
