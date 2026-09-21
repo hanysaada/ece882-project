@@ -1,0 +1,205 @@
+GENERATED FROM hw/golden/amdahl.py WITH KVM INPUTS -- method A (author's: baseline f x optimized time)
+Substituted: NBODY_LINE85=0.1811, NBODY_VEL_UPDATES=0.4761, RT_INTERSECT=0.0967, RT_DOT=0.1606, RT_MAGNORM=0.0674, RT_SUB115=0.1181, RT_LIGHTVIS=0.0697, CROSSING_NS=585.9, NBODY_BASE_MS=101.0, NBODY_OPT_MS=89.9, RT_BASE_MS=367.0, RT_OPT_MS=229.0
+
+==============================================================================
+QUANTITATIVE ACCELERATION JUSTIFICATION
+==============================================================================
+
+All fractions come from results/hw/fractions_kvm.txt (py-spy leaf-frame attribution,
+KVM guest, Python 3.10). All timings come from results/compare/nbody_v4_final_kvm.txt + raytrace_final_kvm.txt. The boundary
+crossing comes from results/hw/call_overhead_kvm.txt. Frequency and area figures are
+ASSUMPTIONS and are labelled as such -- nothing here was synthesised.
+
+------------------------------------------------------------------------------
+STEP 1 — what fraction f can the accelerator actually replace?
+------------------------------------------------------------------------------
+
+nbody
+  line 85, d2 and d2**-1.5                       0.181
+  lines 88-93, the six velocity updates          0.476
+  ------------------------------------------------------
+  f_nbody                                        0.657
+
+  The accelerator performs both: pe_pair computes d2 via dot3, the inverse power
+  via rsqrt, and emits the six scaled deltas. So the whole pair-interaction body
+  of advance() is replaced, not merely the sqrt.
+
+  NOT included, deliberately: the interpreter overhead that surrounds these lines.
+  py-spy attributes samples to the Python line, so interpreter dispatch is already
+  inside these numbers -- counting it again would be double counting.
+
+raytrace -- two framings, and the difference IS the argument
+
+  (a) NARROW: "the accelerator makes sqrt and dot faster"
+      intersectionTime 143+144+145                 0.097
+      magnitude + normalized                       0.067
+      ------------------------------------------------------
+      f_narrow                                     0.164
+      ceiling with infinite hardware               1.20x
+
+  (b) BATCHED: "one call replaces the whole Python vector-math layer"
+      intersectionTime 143+144+145                 0.097
+      dot 52+53 (incl. the do-nothing type guard)  0.161
+      magnitude + normalized                       0.067
+      __sub__:115, the Vector allocation removed   0.118
+      _lightIsVisible:285, shadow-ray tests        0.070
+      ------------------------------------------------------
+      f_batched                                    0.512
+      ceiling with infinite hardware               2.05x
+
+  Phase 2 measured that raytrace is allocation-bound, not math-bound: NO sqrt
+  appears above the 0.5% cutoff in its C-level profile, while subtype_dealloc is
+  3.11%, _PyObject_Malloc 1.95% and slot_tp_init 1.65%. Framing (a) is therefore
+  the honest reading of "a faster sqrt" -- and it caps at 1.20x, which would
+  not survive the question "what is your f for raytrace?".
+  Framing (b) is defensible only because a BATCHED interface genuinely removes the
+  allocations and method calls, not just the arithmetic. That is why accel_top is
+  built around a descriptor.
+------------------------------------------------------------------------------
+STEP 2 — the ceilings, before any hardware is designed
+------------------------------------------------------------------------------
+
+  benchmark          f       ceiling (S_kernel -> infinity)
+  ---------------------------------------------------------
+  nbody            0.657    2.92x
+  raytrace (b)     0.512    2.05x
+  raytrace (a)     0.164    1.20x
+
+These are HARD BOUNDS. No accelerator, however fast, beats them. Stating the
+ceiling before quoting a speedup is the difference between an engineering estimate
+and a sales pitch.
+------------------------------------------------------------------------------
+STEP 3 — what S_kernel can the hardware plausibly deliver?
+------------------------------------------------------------------------------
+
+nbody, from the descriptor interface accel_top actually implements
+  bodies                                    5
+  pairs per timestep, n(n-1)                20
+      accel_top does NOT use Newton's third law: accumulating onto both bodies of
+      a pair is a read-after-write hazard on in-flight state, so it computes each
+      direction separately. 2x the pair work, but II stays 1.
+  timesteps                                 20000
+  total pairs                               400,000
+
+  hardware cycles = steps x (pairs + fill + integrate)
+                  = 20000 x (20 + 49 + 5) = 1,480,000
+  hardware time   = 1,480,000 x 2.0 ns + 586 ns crossing
+                  = 2.961 ms
+  software time in that fraction
+                  = 89.9 ms x 0.657 = 59.082 ms
+
+  S_kernel        = 20.0x
+
+  NOTE the pipeline fill dominates here: 49 cycles of fill against only
+  20 pairs of work per timestep, so the engine is only
+  27% utilised.
+  With 5 bodies this workload is far too small to fill a 49-stage pipeline. That is
+  a REAL limitation of accelerating this benchmark and must be said out loud.
+
+raytrace
+  primary rays, 100x100                        10,000
+  objects in the scene                      8
+  lights (each needs a shadow ray per hit)  2
+  ASSUMPTION: intersection tests per frame  240,000
+      = rays x objects x (1 + lights). Conservative: it ignores reflection rays
+      (recursion depth 3), so the real count is higher and S_kernel would improve.
+
+  hardware cycles = 240,000 + 49 fill = 240,049
+  hardware time   = 0.481 ms  (crossing amortised over 240,000 tests)
+  software time in that fraction
+                  = 229.0 ms x 0.512 = 117.362 ms
+
+  S_kernel        = 244.2x
+
+  Here the pipeline IS well fed: 240,000 tests against 49 cycles of fill means
+  100.0% utilisation. raytrace is the better fit for this
+  accelerator, which is the opposite of what the naive "nbody is the FP benchmark"
+  intuition suggests.
+------------------------------------------------------------------------------
+STEP 4 — total speedup, and the sensitivity that matters
+------------------------------------------------------------------------------
+
+nbody:  f = 0.657, S_kernel = 20.0x
+  S_total = 1 / ((1 - 0.657) + 0.657/20.0) = 2.661x
+  ceiling                                        = 2.917x
+  fraction of the ceiling captured               = 86.7%
+
+raytrace:  f = 0.512, S_kernel = 244.2x
+  S_total = 1 / ((1 - 0.512) + 0.512/244.2) = 2.042x
+  ceiling                                        = 2.051x
+  fraction of the ceiling captured               = 99.2%
+
+SENSITIVITY. The question "what if your kernel estimate is 2x off?" has to have an
+immediate answer, so here is the whole surface. Rows are f, columns are S_kernel.
+
+       f |       2x       5x      10x      20x      50x     100x    1000x
+  ------------------------------------------------------------------------
+    0.10 |    1.05    1.09    1.10    1.10    1.11    1.11    1.11
+    0.20 |    1.11    1.19    1.22    1.23    1.24    1.25    1.25
+    0.30 |    1.18    1.32    1.37    1.40    1.42    1.42    1.43
+    0.40 |    1.25    1.47    1.56    1.61    1.64    1.66    1.67
+    0.50 |    1.33    1.67    1.82    1.90    1.96    1.98    2.00  <- raytrace
+    0.52 |    1.35    1.71    1.88    1.98    2.04    2.06    2.08  <- raytrace
+    0.68 |    1.52    2.19    2.58    2.82    3.00    3.06    3.12
+    0.80 |    1.67    2.78    3.57    4.17    4.63    4.81    4.98
+
+Read across any row: past S_kernel ~20x the numbers barely move. That is the whole
+lesson of Amdahl's law -- once the kernel is fast enough that f/S_kernel is small
+compared with (1-f), further kernel speedup buys almost nothing. Spending silicon
+to push S_kernel from 100x to 1000x on the f = 0.66 row changes the total from
+2.86x to 2.91x.
+
+So the engineering priority is NOT a faster datapath. It is raising f, which means
+moving MORE of the program into the accelerator -- exactly what the batched
+descriptor interface does, and exactly why the interface argument matters more than
+the pipeline depth.
+------------------------------------------------------------------------------
+STEP 5 — when does the accelerator become memory-bandwidth-bound?
+------------------------------------------------------------------------------
+
+ASSUMPTIONS: 32 B per body (accel_top's documented layout), one pair per cycle
+at 500 MHz, and the pessimistic case where nothing is reused on chip.
+
+  bytes per pair, uncached          64 B
+  pairs per second at II=1          5.00e+08
+  bandwidth required                32.0 GB/s
+
+For scale, a DDR5 channel delivers roughly 50 GB/s and PCIe gen5 x16 about
+64 GB/s (both from the course's own lecture 3 figures). So a SINGLE pe_pair at
+500 MHz already needs 32 GB/s if it streams uncached -- it would be
+memory-bound immediately.
+
+What saves it is that accel_top keeps the body array ON CHIP for the whole run:
+  bytes moved per run  = 2 x 5 bodies x 32 B = 320 B  (in and out, once)
+  pairs computed       = 400,000
+  arithmetic intensity = 1250 pairs per byte moved
+
+That is the real reason the descriptor carries N_STEPS. It converts a
+bandwidth-bound streaming problem into a compute-bound one.
+
+CROSSOVER for parallel PEs: with P copies of pe_pair each needing 64 B/cycle
+uncached, P x 32 GB/s must stay under the available bandwidth. Against 50 GB/s
+that is P < 1.56, i.e. even ONE PE exceeds it -- so replication is pointless
+without on-chip reuse. With the array resident on chip, P is limited instead by
+SRAM read ports: 5 bodies is tiny, but at larger n the body store would need
+2P read ports per cycle, and beyond about 4-8 PEs that becomes the binding
+constraint rather than DRAM.
+==============================================================================
+SUMMARY, stated as bounds with assumptions
+==============================================================================
+
+  nbody     f = 0.657  ceiling 2.92x  S_kernel 20x  ->  S_total 2.66x
+  raytrace  f = 0.512  ceiling 2.05x  S_kernel 244x  ->  S_total 2.04x
+
+Honest caveats, all of which should be volunteered rather than extracted:
+  1. 500 MHz is a TARGET, not a synthesis result. Nothing here was synthesised.
+  2. nbody's 5 bodies cannot fill a 49-stage pipeline: utilisation is only
+     27%. The benchmark is too small for this hardware, and a larger n
+     would look much better. Reporting the small-n case is the honest choice.
+  3. S_kernel assumes the accelerated fraction disappears entirely into hardware.
+     Any residual Python glue reduces it.
+  4. The f values come from a Python 3.10 profile on the KVM guest
+     (results/hw/fractions_kvm.txt). The host (3.12) version of this caveat
+     predicted f would rise on 3.10. Measured: nbody 0.519 -> 0.657 (rose, as
+     predicted); raytrace 0.520 -> 0.512 (flat).
+

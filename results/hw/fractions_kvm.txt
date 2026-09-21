@@ -1,0 +1,23 @@
+Accelerable fraction f, KVM guest, Python 3.10.12, py-spy 999 Hz,
+leaf-frame attribution over ALL samples (same rule as HOTSPOTS.md).
+Line groupings copied verbatim from hw/golden/amdahl.py.
+
+nbody   (28094 samples, 0.3% in import machinery)
+  NBODY_LINE85      = 0.181   advance:85, d2 and d2**-1.5
+  NBODY_VEL_UPDATES = 0.476   advance:88-93
+      line 88 : 0.080
+      line 89 : 0.079
+      line 90 : 0.082
+      line 91 : 0.081
+      line 92 : 0.079
+      line 93 : 0.075
+  f_nbody           = 0.657   (host: 0.519)
+
+raytrace (59692 samples, 0.1% in import machinery)
+  RT_INTERSECT = 0.097   intersectionTime:143-145   (host 0.093)
+  RT_DOT       = 0.161   dot:52-53                  (host 0.138)
+  RT_MAGNORM   = 0.067   magnitude:36+normalized:62 (host 0.044)
+  RT_SUB115    = 0.118   __sub__:115                (host 0.156)
+  RT_LIGHTVIS  = 0.070   _lightIsVisible:285        (host 0.089)
+  f_rt (batched) = 0.512   (host 0.520)
+  f_rt (narrow)  = 0.164   (host 0.137)

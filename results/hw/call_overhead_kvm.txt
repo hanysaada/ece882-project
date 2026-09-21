@@ -1,0 +1,60 @@
+==============================================================================
+PYTHON BOUNDARY-CROSSING COST
+python 3.10.12  |  200000 calls per batch, median of 7
+==============================================================================
+
+Reference points (not boundary crossings):
+  empty Python loop iteration                        13.6 ns/call   (spread 4.7)
+  call a trivial PYTHON function                     54.1 ns/call   (spread 20.5)
+  call math.sqrt (a C builtin, fast path)            37.3 ns/call   (spread 27.4)
+
+Foreign-function boundary crossings:
+  ctypes call into libm sqrt()                      305.9 ns/call   (spread 71.7)
+  ctypes call with 3 double arguments               585.9 ns/call   (spread 126.2)
+
+==============================================================================
+WHAT THIS MEANS FOR THE ACCELERATOR INTERFACE
+==============================================================================
+
+Hardware, from the RTL interface contracts at 500 MHz
+  dot3 latency          9 cycles
+  rsqrt latency         25 cycles
+  pair kernel latency   34 cycles = 68 ns
+  initiation interval   1 cycle = 2 ns  -> one result every 2 ns
+
+Measured boundary crossing
+  cheapest C-level call (math.sqrt)   37.3 ns
+  ctypes call, 1 argument             305.9 ns
+  ctypes call, 3 arguments            585.9 ns
+
+PER-OPERATION INTERFACE (one call per body pair)
+  cost per pair = crossing + kernel
+                = 585.9 ns + 68 ns = 654 ns
+  The crossing alone is 8.62x the entire hardware latency, and
+  293x the pipeline's throughput interval. The unit would spend
+  almost all its time waiting for Python. This design is dead on arrival.
+
+  BATCHED,     10 pairs per call:   67.39 ns/pair, crossing is  86.9% of the call
+  BATCHED,    100 pairs per call:    8.54 ns/pair, crossing is  68.6% of the call
+  BATCHED,   1000 pairs per call:    2.65 ns/pair, crossing is  22.1% of the call
+  BATCHED,  10000 pairs per call:    2.07 ns/pair, crossing is   2.8% of the call
+
+The conclusion the presentation should land: hardware acceleration here is an
+INTERFACE problem at least as much as a datapath problem. The datapath is easy --
+three multipliers, an adder tree, a small table and two Newton steps. What decides
+whether any of that speedup survives is how much work crosses the boundary per
+call.
+
+nbody's own configuration is only 10 pairs per timestep (5 bodies), so batching
+per timestep is not enough on its own: at 10 pairs the crossing is still a large
+fraction of the call. The right granularity is one descriptor per MANY timesteps --
+the CPU hands over the body array and a step count, and the engine runs the whole
+inner loop, writing state back only at the end. That is why accel_top.sv is built
+around a DMA engine and a descriptor, not around a memory-mapped register you poke
+once per operation.
+
+For raytrace the batching is natural and much larger: one call per ray against all
+scene objects, and the benchmark traces 100x100 = 10,000 primary rays plus
+reflection and shadow rays, so thousands of intersection tests per call are
+available.
+
