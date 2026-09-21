@@ -1,0 +1,37 @@
+Total duration: 44.7 sec
+Start date: 2026-09-21 09:00:03
+End date: 2026-09-21 09:00:50
+Raw value minimum: 492 ms
+Raw value maximum: 634 ms
+
+Number of calibration run: 1
+Number of run with values: 20
+Total number of run: 21
+
+Number of warmup per run: 1
+Number of value per run: 3
+Loop iterations per value: 1
+Total number of values: 60
+
+Minimum:         492 ms
+Median +- MAD:   524 ms +- 13 ms
+Mean +- std dev: 528 ms +- 25 ms
+Maximum:         634 ms
+
+  0th percentile: 492 ms (-7% of the mean) -- minimum
+  5th percentile: 496 ms (-6% of the mean)
+ 25th percentile: 512 ms (-3% of the mean) -- Q1
+ 50th percentile: 524 ms (-1% of the mean) -- median
+ 75th percentile: 539 ms (+2% of the mean) -- Q3
+ 95th percentile: 578 ms (+10% of the mean)
+100th percentile: 634 ms (+20% of the mean) -- maximum
+
+Number of outlier (out of 473 ms..579 ms): 3
+
+WARNING: the benchmark result may be unstable
+* Not enough samples to get a stable result (95% certainly of less than 1% variation)
+
+Try to rerun the benchmark with more runs, values and/or loops.
+Run 'python3 -m pyperf system tune' command to reduce the system jitter.
+Use pyperf stats, pyperf dump and pyperf hist to analyze results.
+Use --quiet option to hide these warnings.

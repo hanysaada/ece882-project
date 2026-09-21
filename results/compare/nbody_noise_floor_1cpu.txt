@@ -1,0 +1,10 @@
+# Noise floor for nbody
+# Two runs of IDENTICAL baseline code. Any difference is measurement
+# noise, not a real effect. An optimization must beat this to count.
+# processes=60 values=5  interpreter=Python 3.10.12
+
++-----------+----------------+----------------------+
+| Benchmark | nbody_base_kvm | nbody_base2_kvm      |
++===========+================+======================+
+| nbody     | 143 ms         | 145 ms: 1.02x slower |
++-----------+----------------+----------------------+

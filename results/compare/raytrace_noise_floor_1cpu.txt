@@ -1,0 +1,10 @@
+# Noise floor for raytrace
+# Two runs of IDENTICAL baseline code. Any difference is measurement
+# noise, not a real effect. An optimization must beat this to count.
+# processes=20 values=3  interpreter=Python 3.10.12
+
++-----------+-------------------+----------------------+
+| Benchmark | raytrace_base_kvm | raytrace_base2_kvm   |
++===========+===================+======================+
+| raytrace  | 528 ms            | 516 ms: 1.02x faster |
++-----------+-------------------+----------------------+
