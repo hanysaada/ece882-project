@@ -116,21 +116,35 @@ Each script is idempotent and runs the whole pipeline for one benchmark.
 
 ### 2. Step by step
 
+**The two benchmarks use different settings, and you must not mix them.** Each one's
+`PROCESSES`/`VALUES` is the setting whose noise floor passes — see
+[Trusting the numbers](#trusting-the-numbers). Running raytrace at nbody's setting, or
+either at pyperf's defaults, produces numbers that no floor in this repository
+licenses.
+
 ```bash
-# baseline timings AND the noise floor (this one matters most — read below)
-TAG=kvm PROCESSES=60 VALUES=5 bash scripts/run_baseline.sh
+# ---- nbody: 60 processes x 5 values ----------------------------------------
+TAG=repro BENCHES=nbody PROCESSES=60 VALUES=5 bash scripts/run_baseline.sh
+TAG=repro BENCHES=nbody UNWIND=fp DBG_LOOPS=20 bash scripts/run_profile.sh
+TAG=repro BENCHES=nbody PROCESSES=60 VALUES=5 bash scripts/run_ablation.sh
+TAG=repro BENCHES=nbody PROCESSES=60 VALUES=5 ROUNDS=3 bash scripts/run_final.sh
 
-# profiles and flame graphs
-TAG=kvm bash scripts/run_profile.sh
-
-# every optimization variant, measured separately
-TAG=kvm PROCESSES=60 VALUES=5 bash scripts/run_ablation.sh
-
-# the graded before/after
-TAG=kvm PROCESSES=60 VALUES=5 ROUNDS=3 bash scripts/run_final.sh
+# ---- raytrace: 20 processes x 3 values -------------------------------------
+TAG=repro BENCHES=raytrace PROCESSES=20 VALUES=3 bash scripts/run_baseline.sh
+TAG=repro BENCHES=raytrace UNWIND=fp bash scripts/run_profile.sh
+TAG=repro BENCHES=raytrace PROCESSES=20 VALUES=3 bash scripts/run_ablation.sh
+TAG=repro BENCHES=raytrace PROCESSES=20 VALUES=3 ROUNDS=3 bash scripts/run_final.sh
 ```
 
-Note `PROCESSES=60 VALUES=5` for nbody. That is not arbitrary; see below.
+`TAG` controls the suffix on every output file. **It defaults to `repro` above on
+purpose:** with `TAG=kvm` a reproduction run would *overwrite* the committed evidence
+files that the reports cite (`results/compare/nbody_final_kvm0921.txt`,
+`raytrace_final_kvm.txt` and the rest). Tagged `repro`, the new results land beside the
+originals so you can compare them rather than destroy them. Use `TAG=kvm` only if you
+deliberately want to regenerate in place.
+
+`script_nbody.sh` and `script_raytrace.sh` in section 1 do exactly the above with the
+correct settings already applied, which is why they are the recommended route.
 
 ### 3. Correctness on its own
 
