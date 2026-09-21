@@ -1,0 +1,686 @@
+================================================================================
+REPORT: raytrace
+ECE 00460882 HW/SW Co-design
+================================================================================
+
+CONTENTS
+  1. Overview -- what the benchmark does
+  2. How we measured, and why the numbers can be trusted
+  3. Initial analysis -- where the time goes
+  4. Optimizations -- what we changed
+  5. Performance comparison -- the result
+  6. Hardware acceleration proposal
+  7. Conclusion
+
+RESULT IN ONE LINE
+  raytrace runs 1.60x faster (37.6% less time), from 367 ms to 229 ms. This clears
+  the 7% requirement comfortably. The rendered image matches the original
+  byte-for-byte, all 30,000 bytes of it.
+
+THE ONE-SENTENCE SUMMARY OF WHAT WE LEARNED
+  We got 1.60x without changing a single arithmetic operation. Every one of the four
+  optimizations removes OVERHEAD -- function calls, dictionary lookups, object
+  allocations. In a pure-Python program, overhead is the workload.
+
+
+================================================================================
+1. OVERVIEW -- WHAT THE BENCHMARK DOES
+================================================================================
+
+raytrace renders a picture. It draws a 100x100 pixel image of some spheres sitting
+above a checkerboard plane, with reflections traced to three bounces deep. It is
+adapted from a small ray tracer by Callum and Tony Garnock-Jones and ships with
+pyperformance 1.14.0.
+
+HOW RAY TRACING WORKS, BRIEFLY
+
+For each pixel in the image you fire an imaginary ray out from the camera and ask
+"what does this ray hit first?" You test the ray against every object in the scene.
+Once you know what it hit, you work out the colour: fire another ray towards each
+light to check whether the point is in shadow, and fire a reflection ray to see
+what is mirrored there.
+
+So the inner operations run an enormous number of times. For every pixel: one ray
+against every object, plus a shadow ray per light, plus reflection rays.
+
+HOW THE DATA IS STORED
+
+Ordinary Python classes:
+
+    class Vector:  x, y, z          a direction
+    class Point:   x, y, z          a position
+    class Sphere:  centre, radius
+    class Ray:     point, vector    an origin and a direction
+    class Canvas:  an array of width * height * 3 bytes
+
+Again, no numpy and no C libraries. Every vector operation creates Python objects.
+
+THE HOT OPERATIONS
+
+    Vector.dot()                the dot product of two vectors
+    Vector.magnitude()          the length of a vector (a square root)
+    Vector.normalized()         scale a vector to length 1
+    Sphere.intersectionTime()   does this ray hit this sphere, and where?
+    Point.__sub__()             subtract two points to get a vector
+
+HOW WE KNOW A CHANGE IS CORRECT
+
+The rendered image. Canvas.bytes is 100 x 100 x 3 = 30,000 bytes. Any change to the
+geometry, the shading or the intersection test moves at least one pixel.
+
+So our correctness test is a BYTE-FOR-BYTE EXACT MATCH of the whole image. Not a
+tolerance -- an exact identity. All four of our variants pass exactly, which is a
+strong statement that nothing broke.
+
+Contrast this with nbody, where an algebraic rewrite forced us to allow a small
+rounding tolerance. Here we get exactness, because none of our changes touch a
+floating-point operation at all.
+
+THE ORIGINAL SOURCE
+
+baseline/bm_raytrace/run_benchmark.py is an untouched copy of the installed
+pyperformance file, with its SHA-256 in baseline/CHECKSUMS.sha256:
+
+    88ef4d9060d8e8f6ce40f376477aaf89cc808fa44813225a3071a05a1467f017
+
+
+================================================================================
+2. HOW WE MEASURED, AND WHY THE NUMBERS CAN BE TRUSTED
+================================================================================
+
+The full methodology, including the two measurement problems we hit and fixed, is in
+report_nbody.txt section 2 and results/ENVIRONMENT.md. The essentials, and what is
+specific to raytrace:
+
+2.1 THE NOISE FLOOR
+
+Before optimizing anything we checked how accurately this machine can measure at all.
+The test: run the UNCHANGED benchmark, run it again, compare the two. The code is
+identical so the true difference is zero -- anything we observe is measurement error,
+and that bounds the smallest effect we could honestly claim.
+
+    File: results/compare/raytrace_noise_floor_kvm.txt
+
+    # processes=20 values=3  interpreter=Python 3.10.12
+    Benchmark hidden because not significant (1): raytrace
+
+"not significant" is the correct answer. Median 364 +- 4 ms.
+
+Note raytrace needed FEWER samples than nbody to pass (20 processes x 3 values,
+against nbody's 60 x 5). That is because raytrace takes 364 ms per measurement
+against nbody's 100 ms, so each measurement already averages over more work and is
+inherently steadier.
+
+2.2 THE ENVIRONMENT THAT WAS REJECTED
+
+Our first attempt ran on the course server under software emulation, with no hardware
+virtualisation. raytrace's noise floor there was 31%, with a standard deviation 26%
+of the mean and individual measurements ranging from 14.4 s to 39.1 s.
+
+A 31% floor cannot support a 7% claim -- the measurement is less precise than the
+effect being measured. That is what forced the move to a machine with KVM
+virtualisation, where the floor became "not significant". No number from the emulated
+environment appears anywhere in this report.
+
+2.3 WE ALTERNATE, AND WE REPORT THE MEDIAN
+
+We do not measure all the baseline runs then all the optimized ones -- we alternate
+between them for 3 rounds, so anything drifting during the session affects both sides
+equally instead of looking like a speedup.
+
+And we lead with the median rather than the mean, because the distribution has a tight
+centre and a long tail (the signature of running inside a virtual machine, where most
+runs are clean and a few get interrupted by the host).
+
+2.4 THE MACHINE
+
+    Guest        Ubuntu 22.04, kernel 5.15.0-1106-kvm, QEMU with -enable-kvm -cpu host
+    CPU          Intel Core i7-1165G7 (Icelake)
+    Python       3.10.12 release build for all timings
+    perf event   cycles (a real hardware counter)
+
+One detail matters for section 4: Python 3.11 introduced a "specializing interpreter"
+that automatically speeds up repeated attribute lookups. Python 3.10 does NOT have
+it. So our optimizations that remove attribute lookups are worth MORE on this machine
+than they would be on a newer Python -- and we predicted that in advance and
+confirmed it.
+
+
+================================================================================
+3. INITIAL ANALYSIS -- WHERE THE TIME GOES
+================================================================================
+
+3.1 TWO PROFILERS
+
+    py-spy   with normal Python   which of OUR SOURCE LINES is hot
+    perf     with python3-dbg     which C FUNCTION inside Python is hot
+
+Neither alone is enough. perf says "26% of your time is in the bytecode interpreter
+loop", which is true and useless. py-spy names our lines but cannot see inside C.
+
+3.2 WHICH PYTHON LINES ARE HOT (py-spy, 59,692 samples)
+
+    11.81%  line 115   Point.__sub__     -- subtract two points, allocating a Vector
+    10.81%  line 53    Vector.dot        -- the dot product body
+     6.97%  line 285   _lightIsVisible
+     5.25%  line 52    Vector.dot        -- other.mustBeVector()
+     5.23%  line 25    Vector.__init__
+     5.12%  line 49    Vector.scale
+     4.41%  line 145   Sphere.intersectionTime -- the discriminant
+     3.69%  line 36    Vector.magnitude
+     3.51%  line 271   a list comprehension
+     3.05%  line 62    Vector.normalized
+
+Notice what the hottest line is. Point.__sub__ subtracts two points -- and its job is
+to ALLOCATE A NEW Vector OBJECT. The most expensive line in the benchmark is creating
+an object, not doing arithmetic.
+
+And look at line 52, at 5.25%. We will come back to that in section 4.1; it is the
+single best find in this project.
+
+3.3 WHICH C FUNCTIONS ARE HOT (perf with python3-dbg)
+
+Grouped by what they are actually doing:
+
+    THE INTERPRETER
+      26.20%  _PyEval_EvalFrameDefault
+
+    FUNCTION CALL OVERHEAD -- about 11% in total
+       3.60%  call_function
+       2.81%  frame_dealloc
+       2.44%  _PyObject_VectorcallTstate
+       2.31%  _PyEval_MakeFrameVector
+
+    ATTRIBUTE LOOKUP -- about 6.6% in total
+       2.25%  _PyDict_GetItemHint
+       2.22%  lookdict_split
+       2.13%  _PyObject_GetMethod
+
+    ARITHMETIC DISPATCH
+       2.08%  binary_op1
+
+This is the finding that shaped everything. raytrace is limited by FUNCTION CALLS AND
+ATTRIBUTE LOOKUPS, not by arithmetic.
+
+  * The ~11% in call overhead is Python building a frame object for each call,
+    running it, and tearing it down. Every one of those little vector methods pays it.
+  * The ~6.6% in dictionary probing is what "self.x" costs. Every Python object
+    normally carries a dictionary, so reading an attribute means hashing the string
+    "x" and searching a hash table.
+
+Both of our biggest optimizations were chosen directly from this table.
+
+3.4 A PREDICTION WE MADE AND THE PROFILE DISPROVED
+
+Our original plan assumed both our benchmarks shared a square-root bottleneck -- that
+is why we picked this pair. The profile says otherwise:
+
+    0.065%  math_sqrt
+    0.033%  __sqrt_finite
+
+Under 0.1% combined. raytrace is NOT limited by square roots. Not even slightly.
+
+This mattered beyond bookkeeping, because it changed the argument for the hardware
+accelerator. The correct claim is that both benchmarks COMPUTE the same primitive
+(sum three squares, then an inverse square root), which is what lets one datapath
+serve both -- not that both are BOTTLENECKED on it, which is false for raytrace and
+would not have survived a question.
+
+Being able to say "we assumed X, the profile said not-X, here is what we changed" is
+worth more than having guessed right first time.
+
+3.5 A PROFILE THAT WAS NEARLY WRONG
+
+We had two py-spy profiles and they disagreed. One had 20,475 samples of which 31.2%
+were Python STARTING UP -- loading modules, compiling bytecode -- rather than running
+the benchmark. The other had 59,692 samples with 0.1% startup.
+
+Startup is a fixed cost, so the shorter the profiled run, the more it dominates. All
+percentages in this report come from the long profile.
+
+3.6 FLAME GRAPHS
+
+    results/flamegraphs/raytrace_pyspy_f_kvm.svg    Python lines -- start here
+    results/flamegraphs/raytrace_dbg_kvm.svg        C level, baseline
+    results/flamegraphs/raytrace_opt_dbg_kvm.svg    C level, optimized
+    results/flamegraphs/raytrace_diff_kvm.svg       the difference
+
+The WIDTH of a box is how much time it accounts for. Vertical is the call stack -- a
+box sits on whatever called it. Horizontal position means nothing (it is
+alphabetical). Look for wide flat areas, not tall thin towers.
+
+More detail in results/perf/HOTSPOTS.md.
+
+
+================================================================================
+4. OPTIMIZATIONS -- WHAT WE CHANGED
+================================================================================
+
+Four changes. They are CUMULATIVE -- each one adds to the one before -- and the
+shipped version contains all four.
+
+Each variant is generated from the untouched original by scripts/make_variants.py,
+which applies one specific text change and ABORTS if the text it expects is not found
+exactly once. That guarantees each variant differs from its parent in exactly one
+thing, which is what makes the attribution below meaningful.
+
+The measured table (results/compare/raytrace_ablation_kvm.txt):
+
+                       this change alone    running total
+    v1_noguards             1.10x              1.10x
+    v2_slots                1.13x              1.25x
+    v3_radius2         NOT SIGNIFICANT         1.24x
+    v4_inline               1.29x              1.61x
+
+NOT ONE OF THESE CHANGES TOUCHES AN ARITHMETIC OPERATION.
+
+4.1 VARIANT 1 -- DELETING CODE THAT DOES NOTHING (1.10x)
+
+    def dot(self, other):
+        other.mustBeVector()        # <-- we deleted this line
+        return self.x*other.x + self.y*other.y + self.z*other.z
+
+Now go and look at what mustBeVector actually does:
+
+    def mustBeVector(self):
+        return self
+
+That is the entire function. It returns itself, and the caller throws the result
+away. It is a type assertion the original author left in.
+
+But in Python a function call is not free. The interpreter has to build a frame
+object, push it, run the body, tear the frame down, and return a value nobody uses.
+py-spy measured line 52 -- the guard call itself -- at 5.25% of all samples.
+
+We removed four of them: in Vector.dot, Vector.__sub__, Vector.cross, and
+Point.__add__.
+
+THIS IS THE FIND WE ARE PROUDEST OF, and it appears in no guide we were given. We
+found it by reading the source after the profile pointed at dot(). That is the whole
+lesson about profiling: the profile tells you WHERE, but you still have to read the
+code to see WHAT.
+
+Our earlier analysis predicted about 5.5%. Measured: 1.10x, which is 9%.
+
+IS IT SAFE? The guards were checking types. In this scene the functions are only ever
+called with the right types, and the 30,000-byte image match verifies that
+empirically rather than by argument. If the benchmark had a code path that passed a
+Point where a Vector was expected, removing the guard would change behaviour -- and
+the image would differ. It does not.
+
+4.2 VARIANT 2 -- __slots__ (1.13x)
+
+Three lines added, one per class:
+
+    class Vector(object):
+        __slots__ = ('x', 'y', 'z')
+
+WHAT IT DOES. Normally every Python object carries its own dictionary, and "self.x"
+means: look up the type, walk it to find out how "x" is stored, then hash the string
+"x" and search the instance's hash table.
+
+__slots__ tells Python the complete list of attributes in advance. It then stores
+them at fixed positions instead of in a dictionary, so "self.x" becomes a direct read
+at a known offset. The dictionary disappears entirely, which also reduces memory
+allocation.
+
+The C profile named the cost before we made the change: lookdict_split at 2.22%,
+_PyDict_GetItemHint at 2.25%, _PyObject_GetMethod at 2.13%.
+
+Applied to Vector, Point and Ray.
+
+A DETAIL THAT CATCHES PEOPLE OUT. Vector has some class-level constants assigned
+AFTER the class body (Vector.ZERO, Vector.RIGHT, Vector.UP, Vector.OUT). Those are
+attributes of the CLASS, not of instances, so __slots__ does not forbid them. If they
+had been instance attributes this change would have raised AttributeError
+immediately.
+
+A PREDICTION WE MADE IN ADVANCE AND CONFIRMED. This measured 1.05x on our
+development machine (Python 3.12) and 1.13x on the measurement machine (Python 3.10).
+
+Python 3.11 introduced the "specializing adaptive interpreter", which rewrites hot
+bytecode on the fly and caches attribute lookups inline. So on 3.12, the interpreter
+was already doing part of what __slots__ does. On 3.10 there is no such mechanism, so
+removing a dictionary lookup is worth more.
+
+We stated that direction BEFORE measuring. Getting the direction right in advance is
+what shows the mechanism was understood rather than the data fitted afterwards.
+
+SOMETHING WORTH KNOWING ABOUT __slots__: it produces IDENTICAL bytecode.
+"python3 -m dis" cannot show this optimization at all, because the change is in how
+the object is laid out in memory, not in the instructions. Disassembly is not a
+universal explanation -- some optimizations live below the bytecode.
+
+4.3 VARIANT 3 -- A CHANGE THAT TURNED OUT NOT TO MATTER
+
+    # added to __init__
+    self.radius2 = radius * radius
+
+    # in intersectionTime
+    discriminant = self.radius2 - (...)      # was self.radius * self.radius
+
+Sphere.intersectionTime recomputed self.radius * self.radius on EVERY call -- two
+attribute reads and a multiply, for every ray against every sphere. The radius never
+changes after the sphere is created, so we compute it once in the constructor.
+
+This is textbook loop-invariant hoisting, just across a function-call boundary rather
+than a loop.
+
+It measured 4.1% on our development machine. Here: NOT SIGNIFICANT.
+
+WHY, almost certainly: variant 2's __slots__ had ALREADY made those two attribute
+reads cheap. The two optimizations overlap, and v2 got there first.
+
+That is a real insight about cumulative measurement: THE ORDER IN WHICH YOU APPLY
+OPTIMIZATIONS CHANGES THEIR APPARENT INDIVIDUAL VALUE. Had we measured v3 before v2,
+it would have looked worthwhile.
+
+We kept the null result rather than reordering the table to look better. An ablation
+table where every row conveniently works is less believable than one with a null row
+and an explanation.
+
+4.4 VARIANT 4 -- INLINING THE DOT PRODUCTS (1.29x, the biggest win)
+
+    BEFORE
+        def intersectionTime(self, ray):
+            cp = self.centre - ray.point                       # allocates a Vector
+            v = cp.dot(ray.vector)                             # a method call
+            discriminant = self.radius2 - (cp.dot(cp) - v*v)   # another method call
+            if discriminant < 0:
+                return None
+            else:
+                return v - math.sqrt(discriminant)
+
+    AFTER
+        def intersectionTime(self, ray, _sqrt=math.sqrt):
+            c = self.centre
+            p = ray.point
+            rv = ray.vector
+            cx = c.x - p.x
+            cy = c.y - p.y
+            cz = c.z - p.z
+            v = cx*rv.x + cy*rv.y + cz*rv.z
+            discriminant = self.radius2 - (cx*cx + cy*cy + cz*cz - v*v)
+            if discriminant < 0:
+                return None
+            return v - _sqrt(discriminant)
+
+WHAT IT REMOVES. Per ray-sphere test, the original does:
+
+    1. one Vector ALLOCATION (cp), which becomes garbage immediately
+    2. two Python METHOD CALLS (cp.dot twice), each building and destroying a frame
+
+The rewrite does exactly the same arithmetic using three local variables. No object
+is created and no method is called.
+
+WHY THIS IS THE BIGGEST WIN. intersectionTime is the hottest path in the whole
+benchmark. It runs for every ray against every object -- and then AGAIN for every
+light, inside _lightIsVisible, which the profile put at 6.97%.
+
+math.sqrt is also bound as a default argument, which makes the lookup a local array
+index rather than a global dictionary search. Note that this trick PAYS here, unlike
+in nbody, because we are not removing a cheap operation to add a call -- we are making
+an existing call cheaper.
+
+4.5 CORRECTNESS OF EVERY VARIANT
+
+tests/check_equivalence.py runs BEFORE any timing, and scripts/run_ablation.sh
+refuses to measure a variant that fails it.
+
+    v1_noguards    rendered image, 30,000 bytes, EXACT match
+    v2_slots       rendered image, 30,000 bytes, EXACT match
+    v3_radius2     rendered image, 30,000 bytes, EXACT match
+    v4_inline      rendered image, 30,000 bytes, EXACT match
+
+Exact, not within a tolerance. Deleting four function calls, replacing a hash table
+with fixed offsets, hoisting a multiplication out of a function and inlining two dot
+products leaves every single one of 30,000 bytes untouched.
+
+
+================================================================================
+5. PERFORMANCE COMPARISON -- THE RESULT
+================================================================================
+
+What ships: benchmarks/bm_raytrace_opt/run_benchmark.py, which is v4_inline and
+therefore contains all four changes.
+
+    File: results/compare/raytrace_final_kvm.txt
+    3 alternating rounds of (original, optimized); 20 processes, 3 values each
+
+    +-----------+----------+----------------------+
+    | Benchmark | original | optimized            |
+    +===========+==========+======================+
+    | raytrace  | 367 ms   | 229 ms: 1.60x faster |
+    +-----------+----------+----------------------+
+
+    original    median 364 +- 4 ms    mean 367 +- 16 ms
+    optimized   median 229 +- 3 ms    mean 229 +- 6 ms
+
+    RESULT: 1.60x faster, a 37.6% reduction in runtime.
+    This clears the assignment's 7% requirement by a wide margin.
+
+WHY THIS NUMBER CAN BE TRUSTED:
+
+1. The noise floor for this exact setting and session says "not significant". The
+   effect is enormously larger than the floor.
+
+2. Mean and median agree exactly (both 1.60x), and the optimized version's spread is
+   TIGHTER than the original's (3 ms against 4 ms on the median, 6 ms against 16 ms
+   on the mean). A faster and steadier program is what you expect when you have
+   removed allocation pressure, and it is not what noise looks like.
+
+3. The runs were alternated, so drift during the session cannot explain it.
+
+4. The ablation table independently sums to 1.61x through four separate measurements,
+   which is within the spread of the 1.60x measured here. Two different measurement
+   routes agreeing is worth more than either alone.
+
+5. The shipped file is GENERATED from the measured variant by
+   scripts/make_variants.py, so the two cannot drift apart.
+
+CORRECTNESS: the rendered image matches byte for byte, all 30,000 bytes.
+
+
+================================================================================
+6. HARDWARE ACCELERATION PROPOSAL
+================================================================================
+
+The accelerator is shared with nbody, and its full description -- register map, data
+widths, internal architecture, the pipeline, the verification, and what we did not do
+-- is in report_nbody.txt section 6. It is one design with two entry points, so
+duplicating it here would be misleading as well as long.
+
+This section covers what is specific to raytrace, and one result that is more
+interesting than anything in the nbody report.
+
+6.1 WHAT WE ACCELERATE IN RAYTRACE
+
+The kernel is the same: SUM THREE SQUARES, THEN TAKE AN INVERSE SQUARE ROOT.
+
+raytrace uses it in the ray-sphere intersection test. Given a ray and a sphere:
+
+    cp = sphere.centre - ray.point         three subtractions
+    v  = dot(cp, ray.vector)               a dot product
+    discriminant = radius^2 - (dot(cp,cp) - v^2)
+    if discriminant >= 0:  t = v - sqrt(discriminant)
+
+That is two dot products, an inverse square root, and a handful of multiplies and
+subtracts -- exactly what the datapath does. The hardware unit is pe_ray.sv, and it
+instantiates the SAME dot3 and rsqrt modules that nbody's pe_pair.sv uses. Latency 49
+cycles, and a new intersection test can start every cycle.
+
+AN HONEST NOTE ON THE JUSTIFICATION. raytrace's own sqrt is only 0.065% of its
+runtime (section 3.4), so we are NOT claiming that raytrace is bottlenecked on square
+roots. What we are accelerating is the whole intersection test plus the vector
+arithmetic around it, which together are 51.2% of runtime. The inverse square root is
+part of that kernel, not the reason for it.
+
+6.2 THE ACCELERABLE FRACTION
+
+From the py-spy profile (results/hw/fractions_kvm.txt):
+
+    intersectionTime, lines 143-145            0.097
+    dot, lines 52-53                           0.161
+    magnitude + normalized                     0.067
+    Point.__sub__, line 115                    0.118
+    _lightIsVisible, line 285                  0.070
+                                               -----
+    f = 0.512
+
+Amdahl's law gives the ceiling:
+
+    maximum possible speedup = 1 / (1 - f) = 2.05x
+
+Even with infinitely fast hardware, raytrace cannot exceed 2.05x, because 49% of its
+time is not in the accelerated kernel.
+
+With the kernel speedup derived from the hardware's own cycle counts:
+
+    kernel speedup      244.2x
+    overall speedup       2.04x
+
+6.3 THE MOST INTERESTING RESULT IN THE WHOLE HARDWARE ANALYSIS
+
+RAYTRACE IS A BETTER FIT FOR THIS ACCELERATOR THAN NBODY IS, which is the opposite of
+what you would guess.
+
+                     work available     pipeline fill   utilisation   kernel speedup
+    nbody            20 pairs/step      49 cycles           27%           20.0x
+    raytrace         240,000 tests      49 cycles          100%          244.2x
+
+The reason is pipeline filling. The hardware is 49 stages deep, so it takes 49 cycles
+before the first answer emerges. After that you get one per cycle -- but only if you
+have enough independent work to keep feeding it.
+
+nbody has 5 bodies, which is 10 unique pairs per timestep (20 in our hardware version,
+which does not use Newton's third law -- see report_nbody.txt 6.8). You cannot fill a
+49-stage pipeline with 20 items. Most of the time the pipeline is partly empty.
+
+raytrace does about 240,000 intersection tests per frame (10,000 rays x 8 objects x
+(1 + 2 lights)). Against 49 cycles of fill, that is negligible overhead. The pipeline
+runs full.
+
+So the intuition "nbody is the floating-point benchmark, so it will benefit most" is
+exactly backwards. What matters is not how mathematical the workload looks, but
+whether there is enough INDEPENDENT work to keep a deep pipeline busy.
+
+Our simulation confirms the nbody side of this directly: accel_top took 1629 cycles
+for 80 pairs, which is 20 cycles per pair rather than the 1 the pipeline can achieve.
+
+AND YET RAYTRACE'S OVERALL SPEEDUP IS LOWER (2.04x against nbody's 2.66x), because
+its accelerable fraction is smaller (0.512 against 0.657). Amdahl's law dominates
+completely: raytrace's kernel is 12 times faster than nbody's, and it still ends up
+with a lower total speedup.
+
+That is the single most useful thing this analysis produced. Making the kernel faster
+stops helping almost immediately once f is fixed -- which is exactly why you compute
+the ceiling before building anything.
+
+6.4 THE INTERFACE FOR RAYTRACE
+
+The measured cost of calling from Python into hardware is 585.9 ns, against a 68 ns
+kernel and a 2 ns throughput interval (results/hw/call_overhead_kvm.txt). So a design
+with one call per intersection test would be hopeless.
+
+raytrace is a MUCH easier batching problem than nbody, and this is worth noting.
+nbody needed a step count in the descriptor, because 10 pairs per timestep is far too
+few to amortise the crossing -- so the accelerator has to run whole timesteps
+internally.
+
+raytrace naturally has 240,000 independent intersection tests available at once, with
+no dependencies between them. One call per frame, or even per scanline, amortises the
+crossing to nothing:
+
+    tests per call   cost per test   share spent crossing
+             1,000       2.66 ns            22.3%
+            10,000       2.07 ns             2.9%
+
+So the entry point is:
+
+    accel.ray_intersect(cp, rv, r2, count)
+
+which takes arrays of ray and sphere data and returns intersection results in bulk.
+The hardware side is the same pe_ray pipeline fed from the same DMA engine.
+
+6.5 PRECISION
+
+The accelerator is 32-bit. raytrace's correctness measure is an exact 30,000-byte
+image match, which is a much harsher test than nbody's energy tolerance -- a single
+pixel differing by one greyscale level fails it.
+
+We have NOT measured whether the 32-bit accelerator reproduces the image exactly, and
+we will not claim it does. [NOT MEASURED -- the precision study in
+results/hw/precision_study.txt covers nbody's trajectory, not raytrace's image.]
+
+What we can say from the design: the ray-sphere test's output feeds a comparison
+(discriminant < 0) and then a distance used to pick the nearest object. A 2 ULP error
+in the intersection distance could, in principle, flip which object is nearest for a
+ray that hits two surfaces at almost exactly the same distance -- and that would move
+a pixel. So the honest position is that this needs measuring before the hardware path
+could claim byte-exactness, and the software correctness gate would have to be
+replaced by a bounded per-pixel difference for the hardware path.
+
+Raising this ourselves is better than being asked. It is also a genuine difference
+between the two benchmarks: nbody tolerates reduced precision gracefully because its
+correctness measure is a continuous quantity with a tolerance, while raytrace's is a
+discrete all-or-nothing comparison.
+
+
+================================================================================
+7. CONCLUSION
+================================================================================
+
+WHAT WE ACHIEVED
+
+raytrace runs 1.60x faster -- 37.6% less time, from 367 ms to 229 ms -- clearing the
+7% requirement by a wide margin. The rendered image matches the original exactly, all
+30,000 bytes.
+
+WHAT WE LEARNED
+
+We did not change a single arithmetic operation. All four optimizations remove
+overhead:
+
+    1. a function call whose entire body is "return self"        1.10x
+    2. a hash-table lookup that should be a fixed offset read    1.13x
+    3. (nothing -- already covered by the previous change)
+    4. an object allocation and two method calls per test        1.29x
+
+In a pure-Python program, OVERHEAD IS THE WORKLOAD. The profile made that explicit:
+about 11% of runtime in building and destroying function frames, about 6.6% in
+dictionary lookups for attribute access, and 0.065% in square roots.
+
+The most valuable individual find was variant 1, and it came from reading the source
+after the profile pointed at dot(). A profiler tells you where the time goes; it
+cannot tell you that the function being called computes nothing. That required
+opening the file.
+
+We also corrected our own assumption. We chose this benchmark pair believing both
+were bottlenecked on square roots. raytrace is not -- not even slightly. We changed
+the hardware justification accordingly: both benchmarks COMPUTE the same primitive,
+which is what lets one datapath serve both, but only nbody is meaningfully
+maths-bound.
+
+And variant 3 taught us something about measurement rather than about Python: it
+measured 4.1% on one machine and nothing on another, because a previous optimization
+had already removed the cost it targeted. The order in which you apply optimizations
+changes their apparent individual value, which is an argument for measuring each one
+in sequence rather than reporting a single before-and-after number.
+
+THE HARDWARE
+
+The accelerator is shared with nbody -- one pipelined datapath (sum three squares,
+then inverse square root) with two entry points. It is bit-exact against a Python
+golden model, and simulation found seven specific bugs, which is the real evidence
+that it works.
+
+For raytrace, Amdahl's law gives a ceiling of 2.05x with 51.2% of runtime
+accelerable, and our estimate is 2.04x. We did not synthesise the design and did not
+measure an end-to-end speedup, so that is a bounded prediction rather than a result.
+
+The most interesting hardware finding is counterintuitive: raytrace uses this
+accelerator FAR better than nbody does. Its 240,000 independent intersection tests
+fill a 49-stage pipeline completely (100% utilisation, kernel 244x faster), while
+nbody's 20 pairs per timestep leave it 27% utilised. And yet raytrace's overall
+speedup is LOWER, because its accelerable fraction is smaller. Amdahl's law wins over
+raw kernel speed, every time.

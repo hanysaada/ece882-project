@@ -1,0 +1,1149 @@
+================================================================================
+REPORT: nbody
+ECE 00460882 HW/SW Co-design
+================================================================================
+
+CONTENTS
+  1. Overview -- what the benchmark does
+  2. How we measured, and why the numbers can be trusted
+  3. Initial analysis -- where the time goes
+  4. Optimizations -- what we changed
+  5. Performance comparison -- the result
+  6. Hardware acceleration proposal
+  7. Conclusion
+
+RESULT IN ONE LINE
+  nbody runs 1.11x faster (9.9% less time), from 107 ms to 96.7 ms. This clears
+  the 7% requirement. Correctness is verified by energy conservation.
+
+
+================================================================================
+1. OVERVIEW -- WHAT THE BENCHMARK DOES
+================================================================================
+
+nbody simulates gravity. It takes the Sun plus Jupiter, Saturn, Uranus and
+Neptune, and steps them forward in time for 20,000 timesteps while they pull on
+each other. It comes from the Computer Language Benchmarks Game and ships with
+pyperformance 1.14.0.
+
+HOW THE DATA IS STORED
+
+Each body is a plain Python list:
+
+    [[x, y, z], [vx, vy, vz], mass]
+
+That is: a position, a velocity, and a mass. There are two module-level lists:
+
+    SYSTEM   the 5 bodies
+    PAIRS    all 10 unique pairs of bodies
+
+There is no numpy and there are no C libraries. Every single multiply and add
+goes through normal Python objects. That matters a lot, and section 3 explains
+why.
+
+THE HOT FUNCTION
+
+Almost all the time is in one function, advance():
+
+    def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
+        for i in range(n):                    # 20,000 timesteps
+            for (pair) in pairs:              # 10 pairs of bodies
+                # work out the pull between these two bodies,
+                # and adjust both of their velocities
+            for (body) in bodies:             # 5 bodies
+                # move each body according to its velocity
+
+The important number: the inner loop body runs
+
+    20,000 timesteps x 10 pairs = 200,000 times
+
+So anything we remove from inside that loop, we remove 200,000 times. Anything we
+can move outside the loops, we pay for once. This single observation drives every
+optimization in section 4.
+
+THE PHYSICS, BRIEFLY
+
+Gravity gets weaker with distance squared. But we also need to know which
+DIRECTION the pull acts in, and normalising a direction vector costs one more
+factor of distance. Put together, the force factor needs 1/distance^3, which is
+the same as the squared distance raised to the power -1.5. That is why line 85
+reads:
+
+    mag = dt * ((dx*dx + dy*dy + dz*dz) ** (-1.5))
+
+HOW WE KNOW A CHANGE IS CORRECT
+
+The benchmark calls report_energy() before and after the simulation. Gravity
+conserves total energy, so if our changes alter the reported energy, we have
+changed the physics -- that is a bug, not an optimization.
+
+This is a better test than comparing printed output, because it is a law of
+physics rather than a text file. It catches mistakes in reasoning, not just typos.
+We allow a relative tolerance of 1e-12 to absorb floating-point rounding.
+
+THE ORIGINAL SOURCE
+
+baseline/bm_nbody/run_benchmark.py is an untouched copy of the installed
+pyperformance file, with its SHA-256 recorded in baseline/CHECKSUMS.sha256:
+
+    d1385e816d7cfea361b7915e2cf70138cd6b84f40df8bd5152638851f7bcac2b
+
+We keep a pristine copy so our version can be diffed against exactly the code we
+measured.
+
+
+================================================================================
+2. HOW WE MEASURED, AND WHY THE NUMBERS CAN BE TRUSTED
+================================================================================
+
+2.1 THE FIRST QUESTION IS NOT "HOW DO WE MAKE IT FASTER"
+
+Before optimizing anything, we had to answer a different question: how accurately
+can this machine measure anything at all? If our measurement error is 10%, then a
+real 7% speedup is invisible, and a measured 7% "speedup" is probably just noise.
+
+2.2 THE NOISE FLOOR
+
+The test is simple. Run the UNCHANGED benchmark. Then run the UNCHANGED benchmark
+again. Compare the two runs.
+
+The code is identical, so the true difference is exactly zero. Anything we observe
+is therefore pure measurement error. That number is our floor: the smallest effect
+we could ever honestly claim.
+
+    File: results/compare/nbody_noise_floor_kvm0921.txt
+
+    # processes=60 values=5  interpreter=Python 3.10.12
+    Benchmark hidden because not significant (1): nbody
+
+"not significant" is the CORRECT answer here. It means pyperf could not tell the
+two runs apart -- which is right, because they are the same program. Median
+99.8 +- 2.0 ms.
+
+2.3 IT DID NOT WORK THE FIRST TIME
+
+Our first noise floor came back at 1.10x -- a 10% difference between a program and
+itself, measured with 20 processes and 3 values each. Against a 10% floor, a 7%
+claim cannot be made at all.
+
+We raised it to 60 processes x 5 values, which is 360 measurements per side
+instead of 60. Result: not significant.
+
+That outcome tells us something useful. If the machine were fundamentally
+unstable, more samples would not have helped -- you cannot average away a
+systematic problem. The fact that they DID help proves the 10% was simply too few
+samples. Cost: 156 seconds per floor.
+
+Consequence: every nbody number in section 5 is measured at 60x5, the setting
+whose floor passes. A floor measured one way says nothing about a claim measured
+another way.
+
+2.4 WE REPORT THE MEDIAN, NOT JUST THE MEAN
+
+    File: results/compare/nbody_base_stats_kvm0921.txt
+
+    Minimum:         98.1 ms
+    Median +- MAD:   106 ms +- 3 ms
+    Mean +- std dev: 107 ms +- 7 ms
+    Maximum:         about 188 ms
+
+Look at the shape: the middle is tight (3 ms) but there is a long tail (188 ms).
+That is what measuring inside a virtual machine looks like -- most runs are clean
+and a few get interrupted by the host operating system.
+
+The median describes a typical run. The mean gets dragged up by the interrupted
+ones. We give both and lead with the median.
+
+2.5 WE ALTERNATE BASELINE AND OPTIMIZED RUNS
+
+We do not run all the baseline measurements and then all the optimized ones. We
+alternate: baseline, optimized, baseline, optimized, for 3 rounds.
+
+The reason is drift. If we measured all of one side first, then anything that
+changed slowly during the session -- the CPU heating up, a background process
+starting, the host rescheduling our virtual machine -- would land entirely on one
+side and look like a speedup.
+
+This is not a theoretical worry for us. pyperf could not lock the CPU's Turbo
+Boost setting, because the virtual machine does not expose the necessary device,
+and the host is a 15 W laptop chip whose clock speed varies with temperature.
+Alternating is how we handle a variable we could not remove.
+
+2.6 WE LOGGED THE EVIDENCE INSTEAD OF ASSERTING IT
+
+    File: results/compare/nbody_session_kvm0921.txt
+
+    09:22:13  boot_id=1803e111...  sampling check: 3000 samples in 3 s
+    09:22:13  boot_id=1803e111...  NOISE FLOOR start (60 processes, 5 values)
+    09:25:05  boot_id=1803e111...  GATE PASSED: not significant -> running final
+    09:25:05  boot_id=1803e111...  FINAL start (3 alternating rounds)
+    09:31:48  boot_id=1803e111...  FINAL end
+
+Three things this file makes checkable rather than just claimed:
+
+  * The same boot_id appears on every line. That proves the noise floor and the
+    final measurement came from the same boot of the same machine, with no reboot
+    or reconfiguration in between.
+  * The profiler was verified working BEFORE anything was measured.
+  * The noise floor passed BEFORE the final run started. So we did not apply the
+    test afterwards to justify a number we already liked.
+
+The file also records the MD5 of the optimized file that actually ran
+(b651647ee14271b91d66dd6f39549226), and it matches the file committed in this
+repository. So the number provably belongs to this code.
+
+2.7 A RESULT WE MEASURED AND THEN REFUSED TO USE
+
+One run came back at 1.20x -- better than the 1.11x we report.
+
+We did not use it. That morning the whole machine was about 45% slower than the
+evening before (baseline median 147 ms against 101 ms), the spread was 21% of the
+mean, and one measurement came in at 500 ms. The run also had no noise floor taken
+in the same session.
+
+It is kept as results/compare/nbody_final_noisy_20260921_kvm.txt with a note
+saying not to cite it. Taking the biggest number you measured is the easiest thing
+in the world to do, and it is exactly what makes a result worthless.
+
+2.8 TWO MEASUREMENT PROBLEMS WE HIT AND FIXED
+
+Both are worth recording because both produced wrong data before we caught them,
+and both are the same mistake: a tool that reports success while doing nothing
+useful.
+
+PROBLEM 1: perf was secretly sampling at 1 sample per second instead of 999.
+
+The Linux kernel watches how much CPU the profiler's own interrupt uses. If it
+goes over a threshold, the kernel quietly lowers the sampling rate -- repeatedly,
+and it never raises it back. Inside a virtual machine the interrupt looks
+expensive, so the rate collapsed.
+
+Nothing reported an error. perf exited successfully and produced a valid-looking
+flame graph built on 8 samples. We threw away two complete sets of profiles.
+
+What exposed it was arithmetic, not an error message:
+
+    27,000,000,000 nanoseconds / 27 samples = exactly 1,000,000,000 ns per sample
+
+Exactly 1 Hz when you asked for 999 Hz is not random noise. It is a limit being
+applied.
+
+The fix is in scripts/setup_env.sh, and the ORDER of the settings matters. The
+kernel refuses to let you change the sample rate while the throttle percentage is
+zero, so you have to raise the percentage first, then set the rate, then switch the
+throttle off. Our first attempt had this backwards and failed silently -- it looked
+like it applied and changed nothing.
+
+PROBLEM 2: we compared two different sessions and nearly drew a conclusion from it.
+
+We tested whether running the virtual machine with 1 CPU instead of 2 mattered.
+It appeared to show 1 CPU was 40% slower. But that test ran on the morning when the
+whole machine was slow. Measured within the SAME session, 1 CPU (140 +- 4 ms) and
+2 CPUs (147 +- 7 ms) were indistinguishable. The 40% gap was against the previous
+evening's 99.8 ms.
+
+The comparison separated SESSIONS, not configurations. We record it as inconclusive
+and draw no conclusion from it. See results/ENVIRONMENT.md.
+
+Both problems are why section 2.5 and 2.6 exist: alternate the runs, check the gate
+before measuring, log the boot, and never mix sessions.
+
+2.9 THE MACHINE
+
+Full details in results/ENVIRONMENT.md. What matters here:
+
+    Guest        Ubuntu 22.04, kernel 5.15.0-1106-kvm, QEMU with -enable-kvm -cpu host
+    CPU          Intel Core i7-1165G7 (Icelake), hardware performance counters visible
+    Python       3.10.12 release build for all timings
+    glibc        2.35
+    perf event   cycles (a real hardware counter, not a software timer)
+
+Two of these decide results rather than just describing the setup, and both are
+explained where they are used:
+
+  * glibc 2.35 uses a faster implementation of pow() on this CPU than older
+    versions do. This decides the outcome of one of our optimizations entirely
+    (section 4).
+  * Python 3.10 does not have the "specializing interpreter" introduced in 3.11,
+    which speeds up attribute and variable lookups automatically. So optimizations
+    that remove those lookups are worth MORE on this machine than on a newer one.
+
+No timing in this report comes from the debug build of Python. scripts/run_final.sh
+checks this and refuses to run otherwise, because a debug-build timing in a
+comparison table would invalidate the entire results section.
+
+
+================================================================================
+3. INITIAL ANALYSIS -- WHERE THE TIME GOES
+================================================================================
+
+3.1 WE USED TWO PROFILERS, BECAUSE NEITHER IS ENOUGH ALONE
+
+    py-spy   with normal Python   tells us which of OUR SOURCE LINES is hot
+    perf     with python3-dbg     tells us which C FUNCTION inside Python is hot
+
+Why not just perf? Because every Python operation runs inside Python's bytecode
+interpreter loop, a C function called _PyEval_EvalFrameDefault. So a perf-only
+profile says "46.83% of your time is in _PyEval_EvalFrameDefault", which is true
+and completely useless. It cannot tell you which line of your code that was.
+
+Why not just py-spy? Because it only sees Python frames. It cannot look inside the
+C maths library, and that turned out to be the most important fact in this report.
+
+3.2 A PROFILE THAT WAS NEARLY WRONG
+
+We had two py-spy profiles and they disagreed badly:
+
+    profile      samples   in Python startup   line 85
+    short run      9,299        69.2%           5.22%
+    long run      28,094         0.3%          18.11%
+
+In the short run, two thirds of the samples are Python STARTING UP -- loading
+modules, compiling bytecode -- not running the benchmark. Startup is a fixed cost,
+so the shorter the profiled run, the more it dominates.
+
+If we had read our hotspots off the short profile, we would have understated the
+real hot line by a factor of 3.5. All numbers below use the long profiles.
+
+Lesson: a profile's sample count is not only about precision. It changes WHAT you
+are measuring.
+
+3.3 WHICH PYTHON LINES ARE HOT (py-spy, 28,094 samples)
+
+    18.11%  line 85    mag = dt * ((dx*dx + dy*dy + dz*dz) ** (-1.5))
+     8.23%  line 90    v1[2] -= dz * b2m
+     8.09%  line 91    v2[0] += dx * b1m
+     8.04%  line 88    v1[0] -= dx * b2m
+     7.90%  line 89    v1[1] -= dy * b2m
+     7.89%  line 92    v2[1] += dy * b1m
+     7.46%  line 93    v2[2] += dz * b1m
+     5.46%  line 80    the "for pair in pairs" loop header itself
+
+Two findings, and the SECOND one decided the whole project:
+
+  1. Line 85, the ** (-1.5), is the hottest single line at 18.11%.
+  2. The six velocity updates on lines 88-93 add up to 47.6% -- nearly three times
+     as much as line 85.
+
+The obvious thing to optimize is line 85, and that is what every guide suggests.
+But most of the time is in six lines that each look trivial. That is what sent us
+towards restructuring the loop rather than rewriting the formula.
+
+Also note line 80: a "for" statement costing 5.46% on its own. That tells us the
+nested unpacking pattern in the loop header is not free.
+
+3.4 WHICH C FUNCTIONS ARE HOT (perf with python3-dbg)
+
+Baseline, self time (time in that function's own instructions):
+
+    46.83%  _PyEval_EvalFrameDefault   Python's bytecode interpreter loop
+     5.35%  binary_op1                 generic "apply an operator" dispatch
+     4.47%  PyFloat_FromDouble         creating a new float object for each result
+     3.21%  float_dealloc              destroying them again
+     2.39%  list_ass_item              writing v1[0] = ...
+     2.33%  _Py_CheckSlotResult
+     2.13%  __ieee754_pow_fma          the C library's pow() -- line 85's real cost
+     2.11%  PyObject_SetItem           the list-index-write path
+
+The two allocation lines together are 7.7% of all time spent purely CREATING AND
+DESTROYING float objects. In Python, every intermediate result of
+dx*dx + dy*dy + dz*dz is a separate object allocated on the heap. That is the price
+of doing floating-point maths in pure Python, and it is also the strongest argument
+for the hardware accelerator in section 6, which does the same arithmetic in
+registers with no allocation at all.
+
+3.5 THE MOST IMPORTANT NUMBER IN THIS REPORT
+
+    __ieee754_pow_fma          2.13% of cycles
+    the whole ** (-1.5) chain  2.79% of cycles
+
+The power operation costs under 3% of total runtime.
+
+That single fact explains our main negative result. Replacing ** (-1.5) with a
+square root removes that chain COMPLETELY -- we measured 0.00% in the optimized
+profile -- and gains almost nothing, because under 3% was all there was to gain.
+
+On our development machine the identical chain was about 9%. The difference is the
+C library version:
+
+    development host   glibc 2.26   __ieee754_pow_sse2   about 9%
+    measurement VM     glibc 2.35   __ieee754_pow_fma    2.13%
+
+glibc 2.35 picks an FMA-based implementation of pow() on this Icelake CPU; glibc
+2.26 used an older SSE2 one, roughly 4x more expensive. These are two different
+function names appearing in two different profiles -- measured, not guessed.
+
+3.6 FLAME GRAPHS
+
+    results/flamegraphs/nbody_pyspy_f_kvm.svg    Python lines -- start here
+    results/flamegraphs/nbody_dbg_kvm.svg        C level, baseline
+    results/flamegraphs/nbody_opt_dbg_kvm.svg    C level, optimized
+    results/flamegraphs/nbody_diff_kvm.svg       the difference between them
+
+How to read one: the WIDTH of a box is how much time it accounts for. The vertical
+direction is the call stack -- a box sits on top of whatever called it. Horizontal
+position means NOTHING; it is alphabetical, not time order. Look for wide flat
+areas, not tall thin towers.
+
+The difference graph is normalised before subtracting (difffolded.pl -n). Without
+that, the faster optimized build produces fewer samples and every box looks
+uniformly smaller, which tells you nothing. With it, the graph answers the real
+question: did this function's SHARE of runtime shrink?
+
+One labelling note: the difference graph comes from the earlier profiling session
+while the headline 1.11x comes from a later one. The code is identical (MD5
+verified) and both sessions have a passing noise floor, but they are different
+sessions and we label them as such.
+
+More detail in results/perf/HOTSPOTS.md.
+
+
+================================================================================
+4. OPTIMIZATIONS -- WHAT WE CHANGED
+================================================================================
+
+We wrote five variants and measured each one separately. Only one ships. The other
+four are the evidence that explains WHY it is the one that ships.
+
+Each variant is generated automatically from the untouched original by
+scripts/make_variants.py, which applies one specific text change and ABORTS if the
+text it expects is not found exactly once. That guarantees each variant differs
+from its parent in exactly one thing -- otherwise the attribution below would be
+meaningless.
+
+The measured table (results/compare/nbody_ablation_kvm.txt), at 60 processes and
+5 values:
+
+    v1_sqrt          replace ** (-1.5) with a square root    NOT SIGNIFICANT
+    v2_localsqrt     make sqrt a local variable              1.02x
+    v3_slicewrite    write velocities with a slice           NOT SIGNIFICANT
+    v4_struct        restructure the loop                    1.12x   <-- SHIPPED
+    v5_struct_sqrt   v4 plus the square root                 1.01x SLOWER than v4
+
+4.1 VARIANT 1 -- THE TEXTBOOK OPTIMIZATION, WHICH FAILED
+
+    before:  mag = dt * ((dx*dx + dy*dy + dz*dz) ** (-1.5))
+    after:   d2  = dx*dx + dy*dy + dz*dz
+             mag = dt / (d2 * sqrt(d2))
+
+The reasoning is sound. In Python, x ** y becomes a bytecode instruction that calls
+the C library's pow() -- a general-purpose routine for ANY real exponent, which
+works out roughly as exp(y * log x). math.sqrt, by contrast, maps to a single
+hardware instruction. And d2 ** -1.5 is exactly equal to 1/(d2 * sqrt(d2)), so this
+is an identity, not an approximation.
+
+On our development machine this measured 1.13x faster. Every guide recommends it.
+
+On the measurement machine it measured NOTHING.
+
+WHY, with three independent pieces of evidence:
+
+  1. The ablation table above: not significant, and the whole v1+v2+v3 chain adds
+     up to about 2%.
+  2. The profile: the pow chain is 2.79% of cycles in the baseline and 0.00% in the
+     optimized build. So the optimization WORKS PERFECTLY -- it removes the cost
+     entirely. There was simply only ~2% there to remove.
+  3. The function name: this machine uses __ieee754_pow_fma, our development machine
+     used __ieee754_pow_sse2. Different implementations, roughly 4x apart in cost.
+
+THE MECHANISM, stated precisely, because "pow is fast now" is not quite it:
+
+    ** is a bytecode instruction the interpreter executes in place.
+    sqrt(x) is a function CALL.
+
+A call has to push arguments, dispatch, and return. When pow() is expensive, that
+trade pays off. When pow() is cheap, you are paying call overhead to avoid something
+that was already cheap.
+
+And v1 made it worse than necessary: it introduced sqrt as a GLOBAL name, so every
+one of those 200,000 calls also has to hash the string "sqrt" and look it up in the
+module dictionary, then in builtins if that misses.
+
+4.2 VARIANT 2 -- AND WHY ITS NUMBER IS MISLEADING
+
+    def advance(dt, n, bodies=SYSTEM, pairs=PAIRS, _sqrt=sqrt):
+        ...
+        mag = dt / (d2 * _sqrt(d2))
+
+A default argument is evaluated ONCE, when the function is defined, and stored in
+the function's local variable array. So the lookup becomes a simple array index
+instead of a dictionary search.
+
+Measured 1.02x. Real, but small.
+
+THE HONEST CAVEAT: v1 and v2 are tangled together. v2 is mostly UNDOING a cost that
+v1 introduced, not adding value of its own. Reporting "v2 gave us 1.02x" as an
+independent gain would overstate it.
+
+4.3 VARIANT 3 -- A FAILURE WORTH KEEPING
+
+    a1, b1, c1 = v1
+    v1[:] = (a1 - dx*b2m, b1 - dy*b2m, c1 - dz*b2m)
+
+This replaces three separate index-writes with one slice-write, so it LOOKS like
+less work.
+
+It is not. The (a, b, c) part builds a temporary tuple, which is a heap allocation,
+and the slice-write goes through Python's general sequence machinery. Measured not
+significant here, and 1.21x SLOWER on our development machine.
+
+    Fewer bytecode instructions is not the same as less work.
+
+We kept this variant on purpose. A failed experiment with a stated reason shows we
+ran experiments rather than followed a recipe.
+
+4.4 VARIANT 4 -- WHAT ACTUALLY WORKED (SHIPPED)
+
+The profile said the six velocity updates were 47.6% and the arithmetic was 18%.
+So we stopped optimizing the arithmetic.
+
+    def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
+        # (A) dt never changes -- fold it into the masses ONCE, before the loops.
+        #     Also flatten the pair tuples so the loop header is one simple unpack.
+        dtp = [(r1, v1, m1 * dt, r2, v2, m2 * dt)
+               for ((r1, v1, m1), (r2, v2, m2)) in pairs]
+
+        for i in range(n):
+            for (r1, v1, m1d, r2, v2, m2d) in dtp:
+                x1, y1, z1 = r1
+                x2, y2, z2 = r2
+                dx = x1 - x2; dy = y1 - y2; dz = z1 - z2
+
+                # (B) ** (-1.5) LEFT EXACTLY AS IT WAS -- deliberately
+                mag = (dx*dx + dy*dy + dz*dz) ** (-1.5)
+                b1m = m1d * mag
+                b2m = m2d * mag
+
+                # (C) read each velocity list ONCE instead of six times
+                a, b, c = v1
+                d, e, f = v2
+                v1[0] = a - dx*b2m
+                v1[1] = b - dy*b2m
+                v1[2] = c - dz*b2m
+                v2[0] = d + dx*b1m
+                v2[1] = e + dy*b1m
+                v2[2] = f + dz*b1m
+
+(A) MOVING dt OUT OF THE LOOP. The original multiplies by dt inside the loop,
+200,000 times. dt never changes, so we fold it into the masses in a small list
+built once before the loops start -- 10 multiplications instead of 200,000.
+
+Flattening the tuples also fixes the 5.46% loop header. The original pattern
+
+    for (([x1,y1,z1], v1, m1), ([x2,y2,z2], v2, m2)) in pairs:
+
+makes Python take apart a tuple, then two inner tuples, then two lists -- five
+unpacking operations. The flattened version needs three.
+
+(B) LEAVING THE POWER ALONE -- THE KEY DECISION.
+
+Because ** (-1.5) is IDENTICAL in the original and in v4, the cost of pow() appears
+on BOTH sides of the comparison and cancels out. So whatever speedup we measure is
+purely from the restructuring.
+
+That makes the result portable. v1's benefit depended on which C library you were
+running. v4's does not depend on the C library at all -- which is exactly why it
+worked on the measurement machine when v1 did not.
+
+(C) READING EACH VELOCITY ONCE. This is the biggest single win, and the subtlest
+point:
+
+    v1[0] -= dx * b2m      reads v1[0], computes, then writes v1[0]
+    v1[0]  = a - dx * b2m  only writes (a was read once, earlier)
+
+"-=" on a list element is a read AND a write. Six of those lines means six reads
+and six writes. One "a, b, c = v1" replaces all six reads with a single unpack.
+Each removed read was a type check, a bounds check and an index calculation.
+
+MEASURED EFFECT ON THE BYTECODE. We disassembled both versions to check rather
+than assume. Per iteration of the hot loop:
+
+    original   124 instructions,  6 list reads,  6 list writes
+    v4         110 instructions,  0 list reads,  6 list writes
+
+A WARNING ABOUT THAT TABLE: the whole FUNCTION has MORE instructions in v4 than in
+the original (227 against 186), because of the setup line. Static instruction count
+is the wrong measure. The right one is instructions multiplied by how often they
+run: the setup runs once, the loop body 200,000 times.
+
+4.5 VARIANT 5 -- DOES THE SQUARE ROOT HELP ONCE THE STRUCTURE IS FIXED?
+
+A fair question, because v4 removes both of the reasons v1 lost: sqrt is now a
+local variable rather than a global, and dt is already out of the loop so the
+rewrite is a simple reciprocal. If the square root were ever going to win on this
+machine, it would win here.
+
+Measured as a three-way comparison in a single session, alternating between all
+three (results/compare/nbody_v5_ablation_kvm0921v5.txt):
+
+    original    105 ms    median 103  +- 3   ms
+    v4          95.9 ms   median 94.6 +- 2.7 ms    1.10x faster
+    v5          97.1 ms   median 96.3 +- 2.3 ms    1.08x faster
+
+    v5 compared with v4: 1.01x SLOWER. Mean and median agree.
+
+So no. The square root rewrite does not just fail to help -- it is slightly harmful
+even after all the restructuring is done. That closes the question.
+
+4.6 CORRECTNESS OF EVERY VARIANT
+
+tests/check_equivalence.py runs BEFORE any timing, and scripts/run_ablation.sh
+refuses to measure a variant that fails it. A faster program that computes something
+different is not an optimization.
+
+    v1_sqrt          energy matches to 9.5e-15     OK
+    v2_localsqrt     energy matches to 9.5e-15     OK
+    v3_slicewrite    energy matches to 9.5e-15     OK
+    v4_struct        energy matches to 1.313e-15   OK
+    v5_struct_sqrt   energy matches to 2.298e-14   OK
+
+    Tolerance: 1e-12 relative.
+
+WHY THE NUMBERS ARE NOT EXACTLY ZERO, and why the differences between them are
+informative. Folding dt into the masses changes the ORDER of a multiplication:
+
+    original:  m1 * (dt * mag)
+    v4:        (m1 * dt) * mag
+
+Floating-point multiplication is not associative -- the rounding happens at
+different points -- so a small difference is expected. v5 additionally rewrites the
+formula, which is a different rounding path again, so its difference is ten times
+larger. Both are four to five orders of magnitude inside the tolerance. A variant
+whose difference jumped to 1e-6 would be a bug, and this is how we would see it.
+
+4.7 SOMETHING WE GOT SLIGHTLY WRONG, AND DID NOT HIDE
+
+v4's SECOND loop -- the one that moves each body, running 100,000 times -- is
+slightly worse than the original:
+
+    original   44 instructions per iteration,  3 list reads
+    v4         47 instructions per iteration,  6 list reads
+
+The original unpacked the velocity into local variables; v4 reads v[0], v[1], v[2]
+from the list instead. This is accidental fallout from rewriting the loop header,
+not a decision. Reverting just that loop should recover a little more.
+
+We did not measure it, because nbody already clears the requirement at 1.11x, and
+inventing a number for it would be worse than saying this plainly.
+
+
+================================================================================
+5. PERFORMANCE COMPARISON -- THE RESULT
+================================================================================
+
+What ships: benchmarks/bm_nbody_opt/run_benchmark.py, which is v4_struct.
+
+    File: results/compare/nbody_final_kvm0921.txt
+    3 alternating rounds of (original, optimized); 60 processes, 5 values each
+
+    +-----------+----------+-----------------------+
+    | Benchmark | original | optimized             |
+    +===========+==========+=======================+
+    | nbody     | 107 ms   | 96.7 ms: 1.11x faster |
+    +-----------+----------+-----------------------+
+
+    original    minimum 98.1 ms   median 106  +- 3   ms   mean 107  +- 7   ms
+    optimized   minimum 87.3 ms   median 95.4 +- 2.7 ms   mean 96.7 +- 6.6 ms
+
+    RESULT: 1.11x faster, a 9.9% reduction in runtime.
+    This clears the assignment's 7% requirement.
+
+WHY THIS NUMBER CAN BE TRUSTED, in the order a sceptical reader would ask:
+
+1. The noise floor for this exact setting AND this exact session says "not
+   significant". The effect we claim is far above the floor.
+
+2. All three ways of summarising agree, which random noise would not do:
+
+       mean     107   -> 96.7 ms   1.11x
+       median   106   -> 95.4 ms   1.11x
+       minimum   98.1 -> 87.3 ms   1.12x
+
+   The minimum is the most useful of the three. It is the cleanest run observed on
+   each side, so it is the least affected by interference -- and it agrees.
+
+3. The runs were alternated, so drift during the session cannot explain it.
+
+4. The noise-floor check passed BEFORE the final run started, logged with a shared
+   boot ID.
+
+5. THREE SEPARATE SESSIONS agree on identical code (MD5 b651647e... in every case):
+
+       2026-09-20   1.12x
+       2026-09-21   1.11x   <- this is the number we report, from run_final.sh
+       2026-09-21   1.10x   (the three-way comparison in section 4.5)
+
+   Reproducing a result in independent sessions is stronger evidence than any single
+   careful measurement.
+
+6. The shipped file is generated from the measured variant by
+   scripts/make_variants.py, so the two cannot drift apart. This matters because it
+   went wrong once: the shipped file was still an older variant while the ablation
+   had already moved on, so the comparison faithfully measured 1.01x for an
+   optimization we were not proposing.
+
+CORRECTNESS: total system energy after 20,000 timesteps matches the original to
+1.313e-15 relative, against a tolerance of 1e-12. The small difference is
+floating-point rounding from reordering one multiplication, explained in 4.6.
+
+
+================================================================================
+6. HARDWARE ACCELERATION PROPOSAL
+================================================================================
+
+6.1 WHAT WE PROPOSE AND WHY
+
+From section 3.4, pure-Python floating-point arithmetic spends:
+
+    46.83%  in the interpreter loop
+     7.70%  creating and destroying float objects
+     5.35%  deciding which operator implementation to call
+
+None of that is arithmetic. It is bookkeeping about objects that describe numbers.
+In hardware there are no objects -- a number is 32 wires carrying 32 bits -- so all
+of it disappears.
+
+We accelerate the kernel: SUM THREE SQUARES, THEN TAKE AN INVERSE SQUARE ROOT.
+
+We chose that because BOTH our benchmarks compute it:
+
+    nbody      (dx^2 + dy^2 + dz^2) ** -1.5  for the gravitational force
+    raytrace   distances and direction normalising
+
+The assignment asks for something "not too workload-specific", and one unit
+justified against two independent benchmarks is exactly that.
+
+AN HONEST CORRECTION TO THAT ARGUMENT. Our original plan claimed both benchmarks
+were BOTTLENECKED on square roots. The profile disproved it: in raytrace, sqrt is
+0.065% of cycles. raytrace is limited by function calls and object allocation, not
+maths. So the correct claim is that both benchmarks COMPUTE the same primitive,
+which is what lets one datapath serve both -- not that both are bottlenecked on it.
+
+WHY NOT ACCELERATE THE INTERPRETER LOOP, which is 46.83% and much larger? Because
+it is not a kernel. It is general control flow full of data-dependent branches --
+exactly what hardware is bad at and a CPU is already optimised for. The arithmetic
+kernel has a fixed shape, no branches, and is identical every iteration, which is
+what a pipelined datapath is good at. You accelerate the part with a regular shape,
+not the part that is merely large.
+
+6.2 INPUTS AND OUTPUTS
+
+The accelerator is a memory-mapped device on an AXI4-Lite control interface with an
+AXI4 master for data.
+
+CONTROL REGISTERS (32-bit, byte addresses):
+
+    0x00  CTRL       write  START, IRQ_EN, ABORT
+    0x04  STATUS     read   DONE, BUSY, ERR, IRQ
+    0x08  BODY_PTR   r/w    address of the body array in host memory
+    0x0C  N_BODIES   r/w    how many bodies
+    0x10  DT         r/w    the timestep, as a 32-bit float
+    0x14  N_STEPS    r/w    how many timesteps to run before writing back
+    0x18  PAIRS      read   pairs processed so far (performance counter)
+    0x1C  CYCLES     read   busy cycles (performance counter)
+
+DATA WIDTHS: all arithmetic is IEEE-754 binary32 (32-bit float). The control bus is
+32-bit address and 32-bit data. The data bus is 32-bit.
+
+DATA LAYOUT IN MEMORY: 8 words (32 bytes) per body:
+
+    +0 x   +4 y   +8 z   +12 vx   +16 vy   +20 vz   +24 mass   +28 unused
+
+A body needs only 7 words. We use 8 on purpose. The padding wastes 12.5% of memory
+bandwidth and buys a power-of-two stride, which means a body never straddles a
+64-byte cache line and the DMA transfer length is trivial to compute.
+
+TARGET OPERATING FREQUENCY: 500 MHz, so one clock cycle is 2 nanoseconds. This is a
+TARGET. We did not synthesise the design, so there is no timing report proving it is
+achievable.
+
+THE PERFORMANCE COUNTERS ARE NOT DECORATION. They let the driver report the
+ACHIEVED rate of pairs per cycle, so you find out whether the engine is limited by
+computation or by memory on real data instead of assuming. They are how we know the
+utilisation figure in 6.6 rather than guessing it.
+
+6.3 HARDWARE ARCHITECTURE
+
+The design is built from the bottom up, and contains only TWO arithmetic units:
+
+    fp32_mul.sv    multiply two 32-bit floats      3 cycles
+    fp32_add.sv    add two 32-bit floats           3 cycles
+
+Everything else is either a rewiring or an algebraic identity:
+
+    subtraction   fp32_add with one sign bit flipped. No subtract unit exists.
+    the -1.5 power   NO UNIT AT ALL. See below.
+    division      no unit. Avoided by algebra.
+
+Then:
+
+    dot3.sv      three multiplies into a two-level adder tree      9 cycles
+    rsqrt.sv     1/sqrt(x): table lookup + 2 Newton steps         25 cycles
+
+Then the two kernels, which BOTH INSTANTIATE THE SAME dot3 AND rsqrt:
+
+    pe_pair.sv   the nbody kernel        49 cycles
+    pe_ray.sv    the raytrace kernel     49 cycles
+
+And on top:
+
+    accel_top.sv   control registers, DMA engine, 10-state control machine
+
+WHY THERE IS NO POWER UNIT. We need d2 to the power -1.5. We have r = 1/sqrt(d2)
+from the rsqrt unit. And r cubed is exactly d2 to the power -1.5. So two extra
+multiplies replace an entire power unit -- which in hardware would need both a
+logarithm and an exponential unit.
+
+WHERE 49 CYCLES COMES FROM:
+
+    dot3      d2 = dx^2+dy^2+dz^2            9    ->  9
+    rsqrt     r  = 1/sqrt(d2)               25    -> 34
+    multiply  r * r = r^2                    3    -> 37
+    multiply  r^2 * r = r^3                  3    -> 40
+    multiply  r^3 * dt = mag                 3    -> 43
+    multiply  mag * mass                     3    -> 46
+    multiply  that * dx = velocity change    3    -> 49
+
+PIPELINING, AND THE NUMBER THAT MATTERS. The design is split into stages with
+registers between them, so each clock only has to be long enough for one stage.
+That lets the clock run fast. And because a value moves out of stage 1 into stage 2,
+stage 1 is immediately free for the next one.
+
+    LATENCY              49 cycles   how long ONE result takes
+    INITIATION INTERVAL   1 cycle    how often a NEW one can start
+
+The initiation interval is what sets throughput. At 1 cycle, we feed in a new body
+pair every cycle and get a result every cycle, just 49 cycles behind. At 500 MHz
+that is one result every 2 ns.
+
+This is possible because body pairs are INDEPENDENT -- pair (0,1) does not need pair
+(2,3)'s answer. If each result fed into the next, the interval would be 49 instead
+of 1.
+
+WHY rsqrt USES 64 TABLE ENTRIES AND 2 NEWTON STEPS. 1/sqrt(x) cannot be built from
+multiplies and adds, so we look up a rough answer and then refine it. Each Newton
+step roughly triples the number of correct bits. We swept the options in the golden
+model and measured the maximum error, in ULP (units in the last place -- the gap
+between adjacent representable floats):
+
+    entries |  0 steps   1 step   2 steps   3 steps
+    --------+-------------------------------------------
+      16    |   732650    47301      201        2
+      64    |   190954     3249        2        2    <- chosen
+     256    |    48082      208        2        2
+
+64 entries with 2 steps is the knee. 256 entries buys nothing. A third step buys
+nothing. Dropping to 16 entries would need a third step, costing 12 more pipeline
+stages and 3 more multipliers. So we spend 1024 bits of read-only memory to save a
+pipeline stage's worth of multipliers. That is a measured trade, not a guess.
+
+6.4 HARDWARE / SOFTWARE INTERFACE
+
+THE MEASUREMENT THAT DETERMINED THE WHOLE INTERFACE DESIGN
+(results/hw/call_overhead_kvm.txt):
+
+    a ctypes call with 3 double arguments   585.9 ns
+    the entire hardware kernel               68.0 ns
+    the pipeline's throughput interval        2.0 ns
+
+Calling the accelerator costs 8.6 times more than using it. A design with one call
+per body pair would spend nearly all its time waiting for Python. It would be dead
+on arrival.
+
+So the interface hands over a BATCH:
+
+    pairs per call   cost per pair   share spent crossing the boundary
+              1        654    ns                90%
+             10         68.30 ns                87.1%
+          1,000          2.66 ns                22.3%
+         10,000          2.07 ns                 2.9%
+
+AND HERE IS THE NON-OBVIOUS PART. nbody has 5 bodies, which is only 10 pairs per
+timestep. At 10 pairs the crossing is STILL 87% of the call. So batching pairs alone
+does not solve it.
+
+That is why the descriptor carries a STEP COUNT. The CPU hands over the body array
+once and the accelerator runs many timesteps internally, writing the state back only
+at the end. 20,000 timesteps become ONE boundary crossing instead of 20,000.
+
+HOW SOFTWARE USES IT:
+
+    1. CPU writes the descriptor into the control registers
+    2. CPU writes START
+    3. Accelerator fetches the body array by DMA into on-chip memory
+    4. For each timestep: stream every pair through pe_pair, accumulate the velocity
+       changes, then update the positions
+    5. Accelerator writes the array back by DMA, sets DONE, optionally raises an
+       interrupt
+    6. CPU polls DONE or takes the interrupt
+
+DMA matters here: the hardware fetches its own data rather than being fed word by
+word, otherwise the CPU becomes the bottleneck again.
+
+THE DRIVER (hw/sw/) has three tiers and falls back automatically:
+
+    1. "mmio"            real hardware, if a device is present
+    2. "software-model"  a C extension that computes bit-identical results
+    3. "python"          pure Python, if the C extension was never compiled
+
+Tier 3 exists to obey a rule from the course material: do not expect users to change
+their code, and if hardware is unavailable, run on the CPU -- reduced performance is
+better than broken code. The benchmark still works on a machine with no accelerator
+and no compiler.
+
+The driver reports WHICH TIER RAN, and that is the most important function in it.
+Without it, someone could quote software-model timings as accelerator performance.
+The performance counters likewise RAISE AN ERROR rather than returning zeros when no
+device is present, because a zero is quotable and an error is not.
+
+WHY A C EXTENSION AND NOT ctypes: ctypes was measured at 585.9 ns per call because
+it marshals every argument at runtime. Since the entire argument is that the crossing
+must be cheap and rare, ctypes disqualified itself.
+
+6.5 BLOCK DIAGRAM
+
+    hw/diagrams/block_diagram.svg  (and .png, and the .dot source)
+
+Three regions: software on the host CPU, host hardware (caches, interconnect, DRAM),
+and the accelerator.
+
+The diagram was redrawn once. The first version drew every signal as a line between
+boxes, which was complete and told the reader nothing. The claim worth showing is
+that dot3 and rsqrt are ONE design INSTANTIATED BY BOTH kernels, so they now sit in
+their own enclosing box with "instantiated by" arrows to each processing element.
+
+6.6 HOW MUCH FASTER -- AND THE CEILING
+
+Only the accelerated part speeds up. From the py-spy profile, the fraction of nbody's
+runtime that this accelerator could replace is:
+
+    f = 0.657      line 85 (0.181) + the velocity updates on 88-93 (0.476)
+
+Amdahl's law gives the absolute ceiling:
+
+    maximum possible speedup = 1 / (1 - f) = 2.92x
+
+Even with INFINITELY fast hardware, nbody cannot go more than 2.92x faster, because
+34% of its time is not the kernel.
+
+With the kernel speedup derived from the hardware's own cycle counts:
+
+    kernel speedup        20.0x
+    overall speedup        2.66x
+
+A prediction we made in advance and confirmed: we expected f to RISE on Python 3.10
+compared with 3.12, because 3.10 lacks the specializing interpreter and therefore
+spends proportionally more time in exactly the lines we would accelerate. Measured:
+0.519 -> 0.657. Rose, as predicted.
+
+6.7 PERFORMANCE, AREA AND POWER TRADE-OFFS
+
+PERFORMANCE vs AREA in the rsqrt unit: the table above. 64 entries and 2 Newton
+steps sits at the knee. Fewer entries needs another Newton step (more pipeline
+stages and multipliers, i.e. more area and more latency). More entries buys nothing.
+
+AREA vs THROUGHPUT -- why we did not replicate the unit. If the body array had to be
+fetched from DRAM uncached, each processing element would need about 32 GB/s. Against
+50 GB/s of available bandwidth, even ONE unit nearly saturates it, so replication
+would be pointless without keeping data on chip. With the array resident in on-chip
+memory, the limit becomes SRAM read ports: 5 bodies is tiny, but at larger problem
+sizes the store would need 2 read ports per unit per cycle, and beyond roughly 4-8
+units that becomes the binding constraint rather than DRAM.
+
+PRECISION vs AREA AND CORRECTNESS. The accelerator is 32-bit; nbody's reference is
+64-bit. And the correctness measure is energy conservation, which is exactly what
+degrades as precision drops, because the error accumulates across timesteps instead
+of cancelling. So we measured it on the real trajectory
+(results/hw/precision_study.txt), over 2000 steps:
+
+    energy drift from its own starting value
+      64-bit reference                          2.104e-05
+      32-bit kernel, 64-bit stored state        2.106e-05
+      32-bit kernel AND 32-bit stored state     3.450e-05
+
+    final energy difference against the 64-bit reference
+      32-bit kernel, 64-bit stored state        1.818e-08
+      32-bit kernel AND 32-bit stored state     1.346e-05
+
+THE READING THAT MATTERS: the 64-bit reference ITSELF drifts by 2.104e-05. That is
+the integration method's own error and has nothing to do with precision. Our
+accelerator's contribution, with state kept in 64-bit, is 1.818e-08 -- about a
+thousand times SMALLER than the error the algorithm already has. So 32-bit
+arithmetic is negligible here.
+
+It also tells us the right design. Keeping the stored state in 64-bit costs
+1.818e-08; storing it as 32-bit costs 1.346e-05, which is 740 times worse. So the
+loss is in ACCUMULATING state, not in the kernel arithmetic. The answer is narrow
+multiplies with wide accumulation -- the same pattern a TPU uses, with 8-bit
+multiplies feeding 32-bit accumulators. The cheap design is the wrong one, and we
+can show why.
+
+POWER. We did not synthesise, so we have no power figures and will not invent any.
+What can be said directionally: the accelerator removes the interpreter loop, the
+object allocation and the operator dispatch for the accelerated fraction, which is
+where most of the energy currently goes. A fixed-function datapath with no
+instruction fetch, no decode and no register renaming does far less work per useful
+operation than a general-purpose core. The DMA burst pattern is sequential and
+predictable, which is also the cheapest access pattern for DRAM energy. Against
+that, adding 1024 bits of always-powered ROM and 12 extra pipeline stages for the
+Newton steps is a real static-power cost.
+
+6.8 VERIFICATION -- HOW WE KNOW THE HARDWARE IS CORRECT
+
+A Python golden model (hw/golden/model.py) was written FIRST and computes the same
+thing in exact 32-bit arithmetic. It generates the test vectors; the testbenches
+replay them and compare bit for bit.
+
+    tb_dot3       512 vectors, 0 errors                            PASS
+    tb_rsqrt      512 vectors, maximum error 0 ULP (budget 4)      PASS
+    tb_pe_pair    512 vectors, 0 errors                            PASS
+    tb_pe_ray     512 vectors (262 hits, 250 misses), 0 errors     PASS
+    tb_accel_top  80 pairs in 1629 cycles                          PASS
+
+But "the tests pass" is not the real answer to how we know it works. SIMULATION FOUND
+SEVEN SPECIFIC BUGS, and that is the answer:
+
+  1. The golden model's own exponent handling in rsqrt was wrong -- a constant 5.6%
+     error, caught by its own self-test before any hardware existed. Had it survived,
+     every testbench would have "passed" against a wrong reference.
+
+  2. fp32_add lost a rounding bit. When two numbers add and carry over, the result is
+     shifted right by one, which discards the bottom bit. That bit still mattered for
+     rounding, so results came out exactly one unit too low.
+
+     HOW IT WAS FOUND IS THE BEST LESSON IN THIS PROJECT. tb_dot3 tested 512 random
+     vectors with INDEPENDENT inputs and passed with zero errors -- it could have run
+     forever without finding this. pe_pair computes dot3(d, d), a vector against
+     ITSELF, which means summing three squares: always positive, never any
+     cancellation, so the significands always add in the same direction -- exactly
+     the condition that causes a carry. It failed on 4 of 512.
+
+         Test coverage is about the DISTRIBUTION of your inputs, not the count.
+
+  3. A rounding carry was handled wrongly. If the fraction is all ones and rounding
+     pushes it up, the result is exactly 2.0, which must be stored as 1.0 with the
+     exponent increased by one -- so the new fraction must be ZERO. The buggy version
+     shifted the bits instead, giving 1.5. It passed 511 of 512 random vectors.
+
+  4. The rsqrt lookup table was indexed with the exponent parity backwards: 486 of
+     512 failed. The fix was not a patch, it changed the REPRESENTATION -- the index
+     became a bit concatenation of parity and mantissa bits. A failure rate that high
+     usually means the encoding is wrong, not the arithmetic.
+
+  5. A read-after-write hazard, and the most interesting one because it exists ONLY
+     because the pipeline is deep. Results arrive 49 cycles after you ask. The Sun
+     appears in four consecutive pairs, so the second pair read the Sun's velocity 48
+     cycles before the first pair's update had landed.
+
+     The symptom identified it: THE SUN WAS WRONG BY THE MOST, because it is in the
+     most pairs. When the error size tracks how often a value is touched, the problem
+     is a dependency, not the arithmetic.
+
+     Fixed two ways. We dropped Newton's third law, so each pair now updates only one
+     body -- twice the arithmetic for half the writes, which is the right trade
+     because the pipeline has spare capacity while stalling would be expensive. And
+     we use 4 partial accumulators in rotation, so a value is never read before its
+     previous update has landed. Four because the adder takes three cycles.
+
+  6. A control signal was delayed 49 cycles when the real path is 52, because the
+     3-cycle subtract stage sits in front of the kernel. So every result landed in
+     the wrong accumulator. In a pipeline, being three cycles early is just as broken
+     as being late.
+
+  7. The engine wrote 67 words to the bus where 40 were expected, and raised an error
+     flag from leftover values in the pipeline while it was filling. Both were gating
+     problems: producing output before the pipeline was legitimately full.
+
+A test suite that has never failed is a test suite you should not trust.
+
+6.9 WHAT WE DID NOT DO, STATED PLAINLY
+
+  * NOT SYNTHESISED. 500 MHz is a target. There is no timing report, no area figure
+    and no power figure, and we will not invent any.
+  * NO FPGA, NO END-TO-END MEASUREMENT. The benchmark was never run with the
+    accelerator attached. The 2.66x is a calculated prediction from a measured
+    accelerable fraction and an assumed clock, not a measured result.
+  * THE AXI INTERFACES ARE SIMPLIFIED. A single-beat AXI4-Lite control interface and
+    a simple sequential master, not a burst-optimised protocol-complete AXI4 with
+    outstanding transactions and reordering. The assignment asks for a design that is
+    complete and logically consistent, not ready for manufacture.
+  * nbody IS TOO SMALL FOR THIS HARDWARE, and our own simulation says so. accel_top
+    took 1629 cycles for 80 pairs -- 20 cycles per pair, not the 1 the pipeline can
+    do. With 5 bodies there are only 10 independent pairs, and you cannot fill a
+    49-stage pipeline with 10 items. That is 27% utilisation. The limitation is the
+    PROBLEM SIZE, not the hardware; a simulation with hundreds of bodies would look
+    very different.
+
+    Interestingly, raytrace is the better fit for this same accelerator -- it does
+    240,000 intersection tests, which fills the pipeline completely. See
+    report_raytrace.txt. That is the opposite of the intuition that nbody, being
+    "the floating-point benchmark", would benefit most.
+
+The measured speedups in this project are the SOFTWARE ones. The hardware is a
+design-and-analysis proposal, which is what the assignment asks for.
+
+
+================================================================================
+7. CONCLUSION
+================================================================================
+
+WHAT WE ACHIEVED
+
+nbody runs 1.11x faster -- 9.9% less time, from 107 ms to 96.7 ms -- clearing the 7%
+requirement. Energy is conserved to 1.313e-15 against a 1e-12 tolerance, and the
+result reproduces in three independent measurement sessions on identical code.
+
+WHAT WE LEARNED, which is more interesting than the number
+
+The textbook optimization for this benchmark FAILED, and we can say exactly why. The
+recommended change -- replacing ** (-1.5) with a square root -- removes the power
+operation completely and gains almost nothing, because on this machine's C library
+that operation costs under 3% of runtime rather than the 9% it costs on an older one.
+We have the two different function names from the two profiles as evidence. The
+optimization is platform-specific, and we only know that because we measured on two
+machines and read the symbol names.
+
+The mechanism is worth stating precisely: ** is a bytecode instruction executed in
+place, while sqrt(x) is a function call. When the power operation is cheap, trading an
+inline operation for a call is a losing trade.
+
+What DID work was structural: move the constant multiplication out of the loop, unpack
+the loop variable once instead of five times, and read each velocity list once instead
+of six times. Crucially, that change LEAVES THE POWER OPERATION ALONE, so its cost
+cancels on both sides of the comparison and the measured gain is purely structural --
+which is why it transfers across machines when the other change does not.
+
+We also confirmed the negative result twice more. Adding the square root on top of the
+restructured version made things 1% SLOWER, and replacing index writes with a slice
+write was slower still because it allocates a temporary tuple. Fewer bytecode
+instructions is not the same as less work.
+
+THE PROCESS LESSON
+
+More of our effort went into being able to trust numbers than into producing them.
+The noise floor caught three separate problems, including one where we compared two
+different sessions and nearly published the conclusion. The profiler silently sampled
+at 1 Hz instead of 999 Hz and produced two complete sets of worthless flame graphs
+before we noticed. One profile was 69% Python startup rather than the benchmark.
+
+The rule those experiences produced: an exit code proves a program ran, not that it
+did its job. Every check in this project now tests a measured quantity -- a sample
+count, a file size, an energy value -- and never a return code.
+
+THE HARDWARE
+
+We designed, simulated and verified a pipelined accelerator for the shared kernel:
+sum three squares, then take an inverse square root. It is bit-exact against a Python
+golden model across 512 vectors per unit, and simulation found seven specific bugs,
+which is the real evidence that it works.
+
+Amdahl's law bounds what it could deliver: with 65.7% of nbody's runtime accelerable,
+the ceiling is 2.92x and our estimate is 2.66x. We did not synthesise it and we did
+not measure an end-to-end speedup, so that number is a bounded prediction rather than
+a result.
+
+And our own simulation reveals a limitation we would not otherwise have found: with
+only 5 bodies, nbody cannot fill a 49-stage pipeline. Utilisation is 27%. The
+accelerator is fine; the problem is too small. raytrace, with 240,000 intersection
+tests, fills it completely -- the opposite of what you would guess from which
+benchmark "looks like" the floating-point one.
