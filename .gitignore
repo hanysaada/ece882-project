@@ -50,3 +50,7 @@ docs/
 # worked on two machines. The submitted repo contains only VM data, so it
 # documents a problem that no longer exists.
 results/README.md
+
+# simulation build products and the LUT copied next to the testbenches
+hw/sim/build/
+hw/tb/rsqrt_lut.hex

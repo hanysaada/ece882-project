@@ -30,14 +30,22 @@ BUILD    := build
 # common source of silent hardware bugs.
 IVFLAGS  := -g2012 -Wall -I$(RTL_DIR)
 
-RTL := $(RTL_DIR)/delay_line.sv \
-       $(RTL_DIR)/fp32_mul.sv \
-       $(RTL_DIR)/fp32_add.sv \
-       $(RTL_DIR)/dot3.sv \
-       $(RTL_DIR)/rsqrt.sv \
-       $(RTL_DIR)/pe_pair.sv \
-       $(RTL_DIR)/pe_ray.sv \
-       $(RTL_DIR)/accel_top.sv
+# PER-TESTBENCH source lists, not one global RTL list.
+#
+# Two reasons this matters. First, each testbench then compiles only its own
+# module hierarchy, so a failure cannot be caused by a module the test does not
+# instantiate. Second, it means `make dot3` works as soon as dot3 and its
+# dependencies exist -- the repository builds at every commit rather than only
+# once the last module lands.
+RTL_BASE      := delay_line fp32_mul fp32_add
+MODS_dot3      := $(RTL_BASE) dot3
+MODS_rsqrt     := $(RTL_BASE) rsqrt
+MODS_pe_pair   := $(RTL_BASE) dot3 rsqrt pe_pair
+MODS_pe_ray    := $(RTL_BASE) dot3 rsqrt pe_ray
+MODS_accel_top := $(RTL_BASE) dot3 rsqrt pe_pair pe_ray accel_top
+
+# srcs(<test>) -> the .sv paths that testbench needs
+srcs = $(patsubst %,$(RTL_DIR)/%.sv,$(MODS_$(1)))
 
 TESTS := dot3 rsqrt pe_pair pe_ray accel_top
 
@@ -69,9 +77,9 @@ $(BUILD):
 # Each testbench runs with cwd = hw/tb so relative vector paths resolve, and we
 # copy the LUT next to it for $readmemh.
 define RUN_TB
-$(1): $(BUILD) $(RTL) $(TB_DIR)/tb_$(1).sv
+$(1): $(BUILD) $(call srcs,$(1)) $(TB_DIR)/tb_$(1).sv
 	@echo "--- compiling tb_$(1) ---"
-	$(IVERILOG) $(IVFLAGS) -o $(BUILD)/tb_$(1).vvp $(RTL) $(TB_DIR)/tb_$(1).sv
+	$(IVERILOG) $(IVFLAGS) -o $(BUILD)/tb_$(1).vvp $(call srcs,$(1)) $(TB_DIR)/tb_$(1).sv
 	@cp -f $(VEC_DIR)/rsqrt_lut.hex $(TB_DIR)/rsqrt_lut.hex 2>/dev/null || true
 	@echo "--- running tb_$(1) ---"
 	@cd $(TB_DIR) && $(VVP) ../sim/$(BUILD)/tb_$(1).vvp \
