@@ -86,7 +86,19 @@ echo "$EVENT" > results/perf/PERF_EVENT_USED${suffix}.txt
 
 # Call-graph unwinding: dwarf works without frame pointers (Ubuntu 22.04 did not
 # build with them by default), at the cost of much larger samples.
-UNWIND="${UNWIND:-dwarf}"
+# fp, NOT dwarf. This default used to be dwarf, which contradicted the decision
+# recorded in results/ENVIRONMENT.md -- so anyone running these scripts produced
+# profiles that disagreed with our own documented choice.
+#
+# Measured in the guest at ~4K samples, weighted BY SAMPLE COUNT rather than by
+# number of distinct stacks:
+#     fp          85.7% of samples in stacks containing [unknown]
+#     dwarf,4096  99.5%
+# dwarf recovers more distinct call chains but attributes almost nothing cleanly.
+# fp also resolves __ieee754_pow_fma as a leaf, which is the evidence the nbody
+# analysis rests on. Plain -g, which the assignment itself specifies, IS
+# frame-pointer unwinding.
+UNWIND="${UNWIND:-fp}"
 echo "    unwinding method     : $UNWIND"
 
 # --------------------------------------------------------------------------

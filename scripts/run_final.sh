@@ -113,7 +113,7 @@ for bench in $BENCHES; do
   ofold="results/perf/${bench}_opt_dbg${suffix}.folded"
   bfold="results/perf/${bench}_dbg${suffix}.folded"
 
-  perf record -F "$FREQ" -g --call-graph "${UNWIND:-dwarf}" -e "$EVENT" -o "$odata" -- \
+  perf record -F "$FREQ" -g --call-graph "${UNWIND:-fp}" -e "$EVENT" -o "$odata" -- \
       "$DBG_PY" "$opt_src" --worker -l "${DBG_LOOPS:-3}" -n 1 -w 0 >/dev/null 2>&1
   perf script -i "$odata" 2>/dev/null \
     | tools/FlameGraph/stackcollapse-perf.pl > "$ofold"
@@ -141,8 +141,12 @@ for bench in $BENCHES; do
           > "results/flamegraphs/${bench}_diff${suffix}.svg"
     echo "    -> results/flamegraphs/${bench}_diff${suffix}.svg"
     echo "    frames that DISAPPEARED in the optimized profile:"
+    # `|| echo ...` is load-bearing: when no frame disappears, grep matches nothing
+    # and exits 1, which under `set -euo pipefail` killed this script AFTER the
+    # comparison was written -- and, run from a driver, stopped the next benchmark.
     comm -23 <(cut -d' ' -f1 "$bfold" | sort -u) <(cut -d' ' -f1 "$ofold" | sort -u) \
-      | grep -oE '[^;]+$' | sort -u | head -8 | sed 's/^/      /'
+      | grep -oE '[^;]+$' | sort -u | head -8 | sed 's/^/      /' \
+      || echo "      (none -- no frame is absent from the optimized profile)"
   else
     echo "    no baseline .folded for $bench — run scripts/run_profile.sh first"
   fi
