@@ -1,0 +1,10 @@
+# variant parent  -- consumed by scripts/run_ablation.sh
+nbody_v1_sqrt baseline
+nbody_v2_localsqrt nbody_v1_sqrt
+nbody_v3_slicewrite nbody_v2_localsqrt
+nbody_v4_struct baseline
+nbody_v5_struct_sqrt nbody_v4_struct
+raytrace_v1_noguards baseline
+raytrace_v2_slots raytrace_v1_noguards
+raytrace_v3_radius2 raytrace_v2_slots
+raytrace_v4_inline raytrace_v3_radius2

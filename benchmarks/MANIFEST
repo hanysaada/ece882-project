@@ -1,0 +1,8 @@
+[benchmarks]
+
+name	metafile
+nbody_opt	<local>
+raytrace_opt	<local>
+
+[includes]
+<default>

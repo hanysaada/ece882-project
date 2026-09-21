@@ -1,0 +1,9 @@
+[project]
+name = "pyperformance_bm_raytrace_opt"
+version = "1.0.0"
+requires-python = ">=3.8"
+dependencies = ["pyperf"]
+
+[tool.pyperformance]
+name = "raytrace_opt"
+tags = "math"
