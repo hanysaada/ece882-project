@@ -1,0 +1,6 @@
+tb_dot3: loaded 512 vectors
+----------------------------------------------------------
+tb_dot3: checked 512 results, 0 error(s)
+tb_dot3: PASS
+----------------------------------------------------------
+../tb/tb_dot3.sv:110: $finish called at 1066000 (1ps)

@@ -1,0 +1,8 @@
+tb_accel_top: loaded 40 input words
+tb_accel_top: descriptor written (n=5, steps=4)
+tb_accel_top: DONE after 544 status polls
+tb_accel_top: pairs=80 cycles=1629  (expect pairs = 80)
+----------------------------------------------------------
+tb_accel_top: PASS
+----------------------------------------------------------
+../tb/tb_accel_top.sv:247: $finish called at 3324000 (1ps)

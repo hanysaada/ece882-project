@@ -1,0 +1,7 @@
+tb_rsqrt: loaded 512 vectors
+----------------------------------------------------------
+tb_rsqrt: checked 512 results
+tb_rsqrt: max error 0 ULP (budget 4), mean 0/1000 ULP
+tb_rsqrt: PASS
+----------------------------------------------------------
+../tb/tb_rsqrt.sv:122: $finish called at 1098000 (1ps)

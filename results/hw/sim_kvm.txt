@@ -1,0 +1,1186 @@
+mkdir -p build
+--- compiling tb_dot3 ---
+/opt/iverilog12/bin/iverilog -g2012 -Wall -I../rtl -o build/tb_dot3.vvp ../rtl/delay_line.sv ../rtl/fp32_mul.sv ../rtl/fp32_add.sv ../rtl/dot3.sv ../rtl/rsqrt.sv ../rtl/pe_pair.sv ../rtl/pe_ray.sv ../rtl/accel_top.sv ../tb/tb_dot3.sv
+warning: Some design elements have no explicit time unit and/or
+       : time precision. This may cause confusing timing results.
+       : Affected design elements are:
+       :   -- module accel_top declared here: ../rtl/accel_top.sv:79
+       :   -- module delay_line declared here: ../rtl/delay_line.sv:21
+       :   -- module dot3 declared here: ../rtl/dot3.sv:41
+       :   -- module fp32_add declared here: ../rtl/fp32_add.sv:28
+       :   -- module fp32_mul declared here: ../rtl/fp32_mul.sv:29
+       :   -- module nr_step declared here: ../rtl/rsqrt.sv:197
+       :   -- module pe_pair declared here: ../rtl/pe_pair.sv:33
+       :   -- module pe_ray declared here: ../rtl/pe_ray.sv:51
+       :   -- module rsqrt declared here: ../rtl/rsqrt.sv:54
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+--- running tb_dot3 ---
+tb_dot3: loaded 512 vectors
+----------------------------------------------------------
+tb_dot3: checked 512 results, 0 error(s)
+tb_dot3: PASS
+----------------------------------------------------------
+../tb/tb_dot3.sv:110: $finish called at 1066000 (1ps)
+--- compiling tb_rsqrt ---
+/opt/iverilog12/bin/iverilog -g2012 -Wall -I../rtl -o build/tb_rsqrt.vvp ../rtl/delay_line.sv ../rtl/fp32_mul.sv ../rtl/fp32_add.sv ../rtl/dot3.sv ../rtl/rsqrt.sv ../rtl/pe_pair.sv ../rtl/pe_ray.sv ../rtl/accel_top.sv ../tb/tb_rsqrt.sv
+warning: Some design elements have no explicit time unit and/or
+       : time precision. This may cause confusing timing results.
+       : Affected design elements are:
+       :   -- module accel_top declared here: ../rtl/accel_top.sv:79
+       :   -- module delay_line declared here: ../rtl/delay_line.sv:21
+       :   -- module dot3 declared here: ../rtl/dot3.sv:41
+       :   -- module fp32_add declared here: ../rtl/fp32_add.sv:28
+       :   -- module fp32_mul declared here: ../rtl/fp32_mul.sv:29
+       :   -- module nr_step declared here: ../rtl/rsqrt.sv:197
+       :   -- module pe_pair declared here: ../rtl/pe_pair.sv:33
+       :   -- module pe_ray declared here: ../rtl/pe_ray.sv:51
+       :   -- module rsqrt declared here: ../rtl/rsqrt.sv:54
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+--- running tb_rsqrt ---
+tb_rsqrt: loaded 512 vectors
+----------------------------------------------------------
+tb_rsqrt: checked 512 results
+tb_rsqrt: max error 0 ULP (budget 4), mean 0/1000 ULP
+tb_rsqrt: PASS
+----------------------------------------------------------
+../tb/tb_rsqrt.sv:122: $finish called at 1098000 (1ps)
+--- compiling tb_pe_pair ---
+/opt/iverilog12/bin/iverilog -g2012 -Wall -I../rtl -o build/tb_pe_pair.vvp ../rtl/delay_line.sv ../rtl/fp32_mul.sv ../rtl/fp32_add.sv ../rtl/dot3.sv ../rtl/rsqrt.sv ../rtl/pe_pair.sv ../rtl/pe_ray.sv ../rtl/accel_top.sv ../tb/tb_pe_pair.sv
+warning: Some design elements have no explicit time unit and/or
+       : time precision. This may cause confusing timing results.
+       : Affected design elements are:
+       :   -- module accel_top declared here: ../rtl/accel_top.sv:79
+       :   -- module delay_line declared here: ../rtl/delay_line.sv:21
+       :   -- module dot3 declared here: ../rtl/dot3.sv:41
+       :   -- module fp32_add declared here: ../rtl/fp32_add.sv:28
+       :   -- module fp32_mul declared here: ../rtl/fp32_mul.sv:29
+       :   -- module nr_step declared here: ../rtl/rsqrt.sv:197
+       :   -- module pe_pair declared here: ../rtl/pe_pair.sv:33
+       :   -- module pe_ray declared here: ../rtl/pe_ray.sv:51
+       :   -- module rsqrt declared here: ../rtl/rsqrt.sv:54
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+--- running tb_pe_pair ---
+tb_pe_pair: loaded 512 vectors
+----------------------------------------------------------
+tb_pe_pair: checked 512 results, 0 error(s)
+tb_pe_pair: PASS
+----------------------------------------------------------
+../tb/tb_pe_pair.sv:102: $finish called at 1146000 (1ps)
+--- compiling tb_pe_ray ---
+/opt/iverilog12/bin/iverilog -g2012 -Wall -I../rtl -o build/tb_pe_ray.vvp ../rtl/delay_line.sv ../rtl/fp32_mul.sv ../rtl/fp32_add.sv ../rtl/dot3.sv ../rtl/rsqrt.sv ../rtl/pe_pair.sv ../rtl/pe_ray.sv ../rtl/accel_top.sv ../tb/tb_pe_ray.sv
+warning: Some design elements have no explicit time unit and/or
+       : time precision. This may cause confusing timing results.
+       : Affected design elements are:
+       :   -- module accel_top declared here: ../rtl/accel_top.sv:79
+       :   -- module delay_line declared here: ../rtl/delay_line.sv:21
+       :   -- module dot3 declared here: ../rtl/dot3.sv:41
+       :   -- module fp32_add declared here: ../rtl/fp32_add.sv:28
+       :   -- module fp32_mul declared here: ../rtl/fp32_mul.sv:29
+       :   -- module nr_step declared here: ../rtl/rsqrt.sv:197
+       :   -- module pe_pair declared here: ../rtl/pe_pair.sv:33
+       :   -- module pe_ray declared here: ../rtl/pe_ray.sv:51
+       :   -- module rsqrt declared here: ../rtl/rsqrt.sv:54
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+--- running tb_pe_ray ---
+tb_pe_ray: loaded 512 vectors
+----------------------------------------------------------
+tb_pe_ray: checked 512 results (262 hits, 250 misses), 0 error(s)
+tb_pe_ray: PASS
+----------------------------------------------------------
+../tb/tb_pe_ray.sv:106: $finish called at 1146000 (1ps)
+--- compiling tb_accel_top ---
+/opt/iverilog12/bin/iverilog -g2012 -Wall -I../rtl -o build/tb_accel_top.vvp ../rtl/delay_line.sv ../rtl/fp32_mul.sv ../rtl/fp32_add.sv ../rtl/dot3.sv ../rtl/rsqrt.sv ../rtl/pe_pair.sv ../rtl/pe_ray.sv ../rtl/accel_top.sv ../tb/tb_accel_top.sv
+warning: Some design elements have no explicit time unit and/or
+       : time precision. This may cause confusing timing results.
+       : Affected design elements are:
+       :   -- module accel_top declared here: ../rtl/accel_top.sv:79
+       :   -- module delay_line declared here: ../rtl/delay_line.sv:21
+       :   -- module dot3 declared here: ../rtl/dot3.sv:41
+       :   -- module fp32_add declared here: ../rtl/fp32_add.sv:28
+       :   -- module fp32_mul declared here: ../rtl/fp32_mul.sv:29
+       :   -- module nr_step declared here: ../rtl/rsqrt.sv:197
+       :   -- module pe_pair declared here: ../rtl/pe_pair.sv:33
+       :   -- module pe_ray declared here: ../rtl/pe_ray.sv:51
+       :   -- module rsqrt declared here: ../rtl/rsqrt.sv:54
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/fp32_add.sv:153: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+--- running tb_accel_top ---
+tb_accel_top: loaded 40 input words
+tb_accel_top: descriptor written (n=5, steps=4)
+tb_accel_top: DONE after 544 status polls
+tb_accel_top: pairs=80 cycles=1629  (expect pairs = 80)
+----------------------------------------------------------
+tb_accel_top: PASS
+----------------------------------------------------------
+../tb/tb_accel_top.sv:247: $finish called at 3324000 (1ps)
+
+==================== SIMULATION SUMMARY ====================
+  PASS  tb_dot3
+  PASS  tb_rsqrt
+  PASS  tb_pe_pair
+  PASS  tb_pe_ray
+  PASS  tb_accel_top
+===========================================================
+ALL TESTBENCHES PASSED

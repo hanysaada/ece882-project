@@ -1,0 +1,6 @@
+tb_pe_ray: loaded 512 vectors
+----------------------------------------------------------
+tb_pe_ray: checked 512 results (262 hits, 250 misses), 0 error(s)
+tb_pe_ray: PASS
+----------------------------------------------------------
+../tb/tb_pe_ray.sv:106: $finish called at 1146000 (1ps)
