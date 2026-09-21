@@ -1,0 +1,153 @@
+// ============================================================================
+// block_diagram.dot — accelerator architecture and its integration
+// ----------------------------------------------------------------------------
+// Render:  dot -Tsvg block_diagram.dot -o block_diagram.svg
+//          dot -Tpng -Gdpi=150 block_diagram.dot -o block_diagram.png
+//
+// Every arrow is labelled with WHAT flows on it and HOW WIDE it is, because
+// "an arrow from the CPU to the accelerator" is not a design.
+// ============================================================================
+digraph accel {
+    rankdir = TB;
+    compound = true;
+    fontname = "Helvetica";
+    node [fontname = "Helvetica", fontsize = 10];
+    edge [fontname = "Helvetica", fontsize = 9];
+    graph [fontsize = 11];
+
+    // ---------------- software stack -------------------------------------
+    subgraph cluster_sw {
+        label = "SOFTWARE  (host CPU)";
+        style = "rounded,filled";
+        fillcolor = "#eef4fb";
+        color = "#4a7ebb";
+
+        py      [label = "run_benchmark.py\l(unmodified benchmark)\l",
+                 shape = box, style = "filled", fillcolor = "#ffffff"];
+        wrapper [label = "accel.py\lPython wrapper:\l  nbody_step(bodies, dt, n)\l  ray_intersect(ray, spheres)\l  + pure-Python fallback\l",
+                 shape = box, style = "filled", fillcolor = "#ffffff"];
+        cext    [label = "_accel  (CPython C extension)\lbuilds the descriptor,\lpins the body array,\lpolls STATUS or waits on IRQ\l",
+                 shape = box, style = "filled", fillcolor = "#ffffff"];
+        drv     [label = "driver\lmmap of the CSR window\l+ DMA-coherent buffer\l",
+                 shape = box, style = "filled", fillcolor = "#ffffff"];
+    }
+
+    // ---------------- host hardware ---------------------------------------
+    subgraph cluster_host {
+        label = "HOST HARDWARE";
+        style = "rounded,filled";
+        fillcolor = "#f7f2e8";
+        color = "#b08a3e";
+
+        cpu  [label = "CPU core", shape = box, style = "filled", fillcolor = "#ffffff"];
+        l1   [label = "L1 / L2", shape = box, style = "filled", fillcolor = "#ffffff"];
+        llc  [label = "LLC\l~8-32 MB\l", shape = box, style = "filled", fillcolor = "#ffffff"];
+        dram [label = "DRAM\lbody array\l32 B / body\l", shape = box3d,
+              style = "filled", fillcolor = "#ffffff"];
+    }
+
+    interconnect [label = "AXI interconnect  /  PCIe root complex + IOMMU",
+                  shape = box, style = "filled,rounded", fillcolor = "#e8e8e8"];
+
+    // ---------------- the accelerator -------------------------------------
+    subgraph cluster_acc {
+        label = "ACCELERATOR  (accel_top.sv, target 500 MHz)";
+        style = "rounded,filled";
+        fillcolor = "#eef7ee";
+        color = "#4a8b4a";
+
+        csr [label = "CSR block  (AXI4-Lite slave)\l0x00 CTRL   START / IRQ_EN / ABORT\l0x04 STATUS DONE / BUSY / ERR / IRQ\l0x08 BODY_PTR\l0x0C N_BODIES\l0x10 DT       (binary32)\l0x14 N_STEPS\l0x18 PAIRS    (perf counter)\l0x1C CYCLES   (perf counter)\l",
+             shape = box, style = "filled", fillcolor = "#ffffff"];
+
+        fsm [label = "control FSM  (10 states)\lIDLE - LOAD - PAIR_ISSUE - DRAIN\lREDUCE - INTEGRATE - STEP_DONE\lSTORE - DONE\l",
+             shape = box, style = "filled", fillcolor = "#ffffff"];
+
+        dma [label = "DMA engine\lAXI4 master\l", shape = box,
+             style = "filled", fillcolor = "#ffffff"];
+
+        sram [label = "on-chip body store (SRAM)\lpx py pz vx vy vz mass\lMAX_BODIES x 7 x 32 b\lresident for the WHOLE run\l",
+              shape = box, style = "filled", fillcolor = "#fffbe6"];
+
+        subgraph cluster_dp {
+            label = "shared datapath primitives\l(each PE INSTANTIATES these -- one design, two entry points)\l";
+            style = "rounded,filled";
+            fillcolor = "#ffffff";
+            color = "#4a8b4a";
+            rank = same;
+
+            dot3 [label = "dot3\l3 x fp32_mul ->\l2-level adder tree\l((p0+p1)+p2, fixed)\llat 9,  II 1\l", shape = box,
+                  style = "filled", fillcolor = "#d9f2d9"];
+            rsq  [label = "rsqrt\l64-entry Q2.14 LUT seed\l+ 2 x Newton-Raphson\ly <- y(1.5 - 0.5xy^2)\llat 25,  II 1,  <=3 ULP\l", shape = box,
+                  style = "filled", fillcolor = "#d9f2d9"];
+        }
+
+        subgraph cluster_pe {
+            label = "processing elements";
+            style = "rounded,filled";
+            fillcolor = "#ffffff";
+            color = "#4a8b4a";
+            rank = same;
+
+            pep  [label = "pe_pair   (nbody)\ld2 = dot3(d,d);  r = rsqrt(d2)\lmag = dt * r^3\l-> 6 velocity deltas\llat 49,  II 1\l", shape = box,
+                  style = "filled", fillcolor = "#c6ebc6"];
+            per  [label = "pe_ray   (raytrace)\lv = dot3(cp,rv);  cc = dot3(cp,cp)\ldisc = r2 - (cc - v*v)\lt = v - disc*rsqrt(disc), + hit\llat 49,  II 1\l", shape = box,
+                  style = "filled", fillcolor = "#c6ebc6"];
+        }
+
+        sub3 [label = "delta subtract\l3 x fp32_add\l(sign flip is free)\llat 3\l", shape = box,
+              style = "filled", fillcolor = "#f0fff0"];
+
+        acc [label = "accumulate\l4 partial accumulators\lround-robin (covers the\l3-cycle adder latency)\l-> (p0+p1)+(p2+p3)\l",
+             shape = box, style = "filled", fillcolor = "#fffbe6"];
+        integ [label = "integrate\lpos += dt * vel\l3 x mul + 3 x add\l", shape = box,
+               style = "filled", fillcolor = "#fffbe6"];
+    }
+
+    // ---------------- software flow ---------------------------------------
+    py      -> wrapper [label = "call, once per\lbatch (not per op)"];
+    wrapper -> cext    [label = "buffer + params"];
+    wrapper -> py      [label = "fallback path\lif no device", style = dashed,
+                        color = "#888888", fontcolor = "#888888"];
+    cext    -> drv     [label = "ioctl / mmap"];
+    drv     -> cpu     [label = "stores to the\lCSR window"];
+
+    // ---------------- host to interconnect --------------------------------
+    cpu  -> l1   [dir = both, label = "64 B lines"];
+    l1   -> llc  [dir = both, label = "64 B lines"];
+    llc  -> dram [dir = both, label = "64 B lines"];
+    cpu  -> interconnect [label = "MMIO writes\l32 b addr / 32 b data\l8 registers"];
+    dram -> interconnect [dir = both, label = "DMA burst\l32 b data\l32 B per body"];
+
+    // ---------------- interconnect to accelerator -------------------------
+    interconnect -> csr [label = "AXI4-Lite\l8 b addr, 32 b data\l1 cycle"];
+    interconnect -> dma [dir = both, label = "AXI4\l32 b addr, 32 b data"];
+
+    // ---------------- inside the accelerator ------------------------------
+    csr -> fsm  [label = "descriptor:\lBODY_PTR, N_BODIES,\lDT, N_STEPS, START"];
+    fsm -> csr  [label = "DONE / BUSY / ERR\lPAIRS / CYCLES"];
+    fsm -> dma  [label = "read/write requests"];
+    dma -> sram [label = "32 b words\l8 per body\l(ONCE per run)"];
+    sram -> dma [label = "write-back\l32 b words\l(ONCE per run)"];
+
+    fsm  -> sub3 [label = "issue (i,j)\l1 pair/cycle"];
+    sram -> sub3 [label = "pos_i, pos_j\l6 x 32 b"];
+    sub3 -> pep  [label = "dx,dy,dz + masses\l5 x 32 b"];
+
+    // containment: both PEs are built from the same two primitives
+    dot3 -> pep [label = "instantiated by", style = dashed, color = "#4a8b4a",
+                 fontcolor = "#4a8b4a", constraint = false];
+    rsq  -> pep [label = "instantiated by", style = dashed, color = "#4a8b4a",
+                 fontcolor = "#4a8b4a", constraint = false];
+    dot3 -> per [label = "x2", style = dashed, color = "#4a8b4a",
+                 fontcolor = "#4a8b4a", constraint = false];
+    rsq  -> per [style = dashed, color = "#4a8b4a", constraint = false];
+
+    pep  -> acc  [label = "6 deltas\l6 x 32 b"];
+    acc  -> sram [label = "vx,vy,vz\l3 x 32 b per body"];
+    fsm  -> integ [label = "per body"];
+    sram -> integ [dir = both, label = "pos, vel\l6 x 32 b"];
+    per  -> csr   [label = "t + hit\l(raytrace path)", style = dotted];
+
+    csr -> cpu [label = "IRQ  (or the CPU\lpolls STATUS.DONE)", style = dotted,
+                color = "#aa3333", fontcolor = "#aa3333"];
+}
