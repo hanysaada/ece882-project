@@ -92,6 +92,40 @@ if command -v perf >/dev/null 2>&1; then
   fi
   sudo sysctl -w kernel.kptr_restrict=0 >/dev/null 2>&1 || echo "    kptr_restrict: could not set"
 
+  # DISABLE THE DYNAMIC SAMPLE-RATE THROTTLE. This cost us two full days, twice.
+  #
+  # The kernel watches what fraction of CPU perf's sampling interrupt consumes and,
+  # if it exceeds perf_cpu_time_max_percent (default 25), silently RATCHETS
+  # perf_event_max_sample_rate down -- repeatedly, and it does not recover. Under a
+  # VM the interrupt looks expensive, so the rate collapses toward 1 Hz. -F 999 is
+  # then ignored and you get single-digit sample counts from a multi-second run.
+  #
+  # Reading the ceiling at setup time does NOT protect you: it read a healthy
+  # 100000 here and was ratcheted down later, during the profiling runs themselves.
+  # Setting the percent to 0 turns the mechanism off entirely, which is what we
+  # want on a machine whose only job is profiling.
+  #
+  # THE ORDER BELOW IS LOAD-BEARING. perf_proc_update_handler() in
+  # kernel/events/core.c rejects any write to the sample rate while the percent is
+  # 0 or 100:
+  #
+  #     if (write && (perf_cpu == 100 || perf_cpu == 0))
+  #             return -EINVAL;
+  #
+  # So percent must be NON-ZERO to raise the rate, and only then may it go to 0.
+  # Setting percent=0 first leaves the rate read-only at whatever value the kernel
+  # had already ratcheted it down to -- which is exactly the state we are trying to
+  # escape, silently unfixed. Writing 0 afterwards only clears
+  # perf_sample_allowed_ns and returns, so it does not clobber the rate.
+  sudo sysctl -w kernel.perf_cpu_time_max_percent=25 >/dev/null 2>&1 \
+    || echo "    perf_cpu_time_max_percent: could not set (need sudo)"
+  sudo sysctl -w kernel.perf_event_max_sample_rate=5000 >/dev/null 2>&1 \
+    || echo "    perf_event_max_sample_rate: could not set"
+  sudo sysctl -w kernel.perf_cpu_time_max_percent=0 >/dev/null 2>&1 \
+    || echo "    perf_cpu_time_max_percent: could not disable throttle"
+  echo "    throttle: perf_cpu_time_max_percent=$(cat /proc/sys/kernel/perf_cpu_time_max_percent 2>/dev/null)" \
+       "max_sample_rate=$(cat /proc/sys/kernel/perf_event_max_sample_rate 2>/dev/null)"
+
   # Which event can we sample? NOTE: perf stat exits 0 even when an event prints
   # "<not supported>", so the exit code is NOT a usable probe -- parse the output.
   # run_profile.sh and run_final.sh repeat this detection at measurement time;
@@ -105,6 +139,33 @@ if command -v perf >/dev/null 2>&1; then
     echo "    hardware 'cycles' available -> the guest PMU is exposed."
   fi
   echo "    Record this in results/ENVIRONMENT.md."
+
+  # HARD ASSERTION: actually record a profile and count the samples.
+  #
+  # Everything above only inspects settings. Three times now a tool has exited 0
+  # while doing nothing useful -- perf stat printing "<not supported>", a pipe whose
+  # first stage emitted nothing leaving a 0-byte .folded, and perf record
+  # "succeeding" with 8 samples. So the only trustworthy check is to take a real
+  # sample set and look at how big it is.
+  #
+  # 1 second at -F 999 should yield roughly 999 samples. Anything under 200 means
+  # the rate is being clamped, and every profile taken afterwards is worthless.
+  # Fail here, loudly, rather than discovering it in a flame graph.
+  say "Asserting perf can actually sample (1 s at -F 999)"
+  _pd=$(mktemp -u /tmp/perfprobe.XXXXXX.data)
+  perf record -F 999 -g -o "$_pd" -- \
+      python3 -c "x=0.0
+for i in range(30000000): x+=i*0.5" >/dev/null 2>&1 || true
+  _n=$(perf script -i "$_pd" 2>/dev/null | grep -c '^[a-zA-Z]' || echo 0)
+  rm -f "$_pd"
+  echo "    samples collected: $_n"
+  if [ "$_n" -lt 200 ]; then
+    die "perf collected only $_n samples where ~1000 was expected. The sample rate is
+     being throttled, so every profile from this machine would be worthless.
+     Check:  sysctl kernel.perf_cpu_time_max_percent kernel.perf_event_max_sample_rate
+     Both must be settable; the first must be 0. Re-run this script with sudo working."
+  fi
+  ok "perf sampling verified at $_n samples"
 fi
 
 # ---------------------------------------------------------------------------
