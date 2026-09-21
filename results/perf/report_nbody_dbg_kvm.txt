@@ -1,0 +1,447 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 4K of event 'cycles'
+# Event count (approx.): 17488040983
+#
+# Children      Self  Command      Shared Object         Symbol                             
+# ........  ........  ...........  ....................  ...................................
+#
+    46.98%    46.83%  python3-dbg  python3.10d           [.] _PyEval_EvalFrameDefault
+            |          
+            |--1.62%--0x300370014137c
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--1.46%--0x3c000300370014
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--1.12%--0x137c117c00190005
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--1.12%--0x147c117c00190005
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.86%--0x180a7c057c0e7d
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.80%--0x504640d7c003c
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.78%--0x3c000300380014
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.78%--0x97c127d00140013
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.78%--0x300380014147c
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.76%--0xa7d035c035c097d
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.75%--0xe7c137d0014127c
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.73%--0x14107c107c0014
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.71%--0x107c001900050364
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.68%--0x117c001900050464
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.60%--0x177d167d035c157d
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.59%--0x35c035c097d087d
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.59%--0x14117c117c0017
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.56%--0x117d00180c7c077c
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.54%--0xa7c057c0e7d0d7d
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.54%--0x380014147c117c
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.53%--0x140f7c0f7c007c
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.52%--0x370014137c107c
+            |          _PyEval_EvalFrameDefault
+            |          
+            |--0.52%--0x464087c003c0003
+            |          _PyEval_EvalFrameDefault
+            |          
+             --0.52%--0x50464087c003c
+                       _PyEval_EvalFrameDefault
+
+    23.81%     0.00%  python3-dbg  [unknown]             [.] 0x00000000009ad3c0
+            |
+            ---0x9ad3c0
+               |          
+               |--5.19%--binary_op1
+               |          
+               |--2.39%--list_ass_item.lto_priv.0
+               |          
+               |--1.86%--binary_iop1
+               |          
+               |--1.75%--_Py_CheckSlotResult
+               |          
+               |--1.72%--float_mul.lto_priv.0
+               |          
+               |--1.36%--PyObject_SetItem
+               |          
+               |--1.35%--float_add.lto_priv.0
+               |          
+               |--1.25%--list_ass_subscript.lto_priv.0
+               |          
+               |--1.22%--float_sub.lto_priv.0
+               |          
+               |--0.70%--PyFloat_FromDouble
+               |          
+               |--0.66%--float_dealloc.lto_priv.0
+               |          
+               |--0.63%--_PyNumber_Index
+               |          
+                --0.56%--PyLong_AsSsize_t
+
+     5.35%     5.35%  python3-dbg  python3.10d           [.] binary_op1
+            |          
+             --5.19%--0x9ad3c0
+                       binary_op1
+
+     4.47%     4.47%  python3-dbg  python3.10d           [.] PyFloat_FromDouble
+            |          
+            |--3.77%--PyFloat_FromDouble
+            |          
+             --0.70%--0x9ad3c0
+                       PyFloat_FromDouble
+
+     3.21%     3.21%  python3-dbg  python3.10d           [.] float_dealloc.lto_priv.0
+            |          
+             --0.66%--0x9ad3c0
+                       float_dealloc.lto_priv.0
+
+     3.07%     0.00%  python3-dbg  [unknown]             [.] 0x00000000009af720
+            |
+            ---0x9af720
+               |          
+               |--0.77%--list_subscript.lto_priv.0
+               |          
+               |--0.67%--PyNumber_AsSsize_t
+               |          
+               |--0.61%--PyObject_GetItem
+               |          
+                --0.57%--_PyNumber_Index
+
+     2.39%     2.39%  python3-dbg  python3.10d           [.] list_ass_item.lto_priv.0
+            |
+            ---0x9ad3c0
+               list_ass_item.lto_priv.0
+
+     2.33%     2.33%  python3-dbg  python3.10d           [.] _Py_CheckSlotResult
+            |          
+            |--1.75%--0x9ad3c0
+            |          _Py_CheckSlotResult
+            |          
+             --0.59%--_Py_CheckSlotResult
+
+     2.13%     2.11%  python3-dbg  python3.10d           [.] PyObject_SetItem
+            |          
+             --1.34%--0x9ad3c0
+                       PyObject_SetItem
+
+     2.13%     2.13%  python3-dbg  libm.so.6             [.] __ieee754_pow_fma
+            |
+            ---__ieee754_pow_fma
+
+     2.04%     2.04%  python3-dbg  python3.10d           [.] _Py_Dealloc
+     1.86%     1.86%  python3-dbg  python3.10d           [.] binary_iop1
+            |
+            ---0x9ad3c0
+               binary_iop1
+
+     1.79%     0.00%  python3-dbg  [unknown]             [.] 0x003c000300370014
+            |
+            ---0x3c000300370014
+               |          
+                --1.48%--_PyEval_EvalFrameDefault
+
+     1.72%     1.72%  python3-dbg  python3.10d           [.] float_mul.lto_priv.0
+            |
+            ---0x9ad3c0
+               float_mul.lto_priv.0
+
+     1.64%     0.00%  python3-dbg  [unknown]             [.] 0x000300370014137c
+            |
+            ---0x300370014137c
+               _PyEval_EvalFrameDefault
+
+     1.62%     1.62%  python3-dbg  python3.10d           [.] get_float_state
+            |          
+             --0.91%--get_float_state
+
+     1.56%     1.53%  python3-dbg  python3.10d           [.] PyNumber_AsSsize_t
+            |          
+             --0.67%--0x9af720
+                       PyNumber_AsSsize_t
+
+     1.46%     1.46%  python3-dbg  python3.10d           [.] _Py_NewReference
+            |
+            ---_Py_NewReference
+
+     1.43%     0.00%  python3-dbg  [unknown]             [.] 0x147c117c00190005
+            |
+            ---0x147c117c00190005
+               |          
+                --1.12%--_PyEval_EvalFrameDefault
+
+     1.41%     1.41%  python3-dbg  python3.10d           [.] PyObject_GetItem
+            |          
+             --0.61%--0x9af720
+                       PyObject_GetItem
+
+     1.38%     0.00%  python3-dbg  [unknown]             [.] 0x137c117c00190005
+            |
+            ---0x137c117c00190005
+               |          
+                --1.12%--_PyEval_EvalFrameDefault
+
+     1.35%     1.35%  python3-dbg  python3.10d           [.] float_add.lto_priv.0
+            |
+            ---0x9ad3c0
+               float_add.lto_priv.0
+
+     1.25%     1.25%  python3-dbg  python3.10d           [.] list_ass_subscript.lto_priv.0
+            |
+            ---0x9ad3c0
+               list_ass_subscript.lto_priv.0
+
+     1.22%     0.00%  python3-dbg  [unknown]             [.] 0x0e7c137d0014127c
+            |
+            ---0xe7c137d0014127c
+               |          
+                --0.75%--_PyEval_EvalFrameDefault
+
+     1.22%     1.22%  python3-dbg  python3.10d           [.] float_sub.lto_priv.0
+            |
+            ---0x9ad3c0
+               float_sub.lto_priv.0
+
+     1.20%     1.20%  python3-dbg  python3.10d           [.] _PyNumber_Index
+            |          
+            |--0.63%--0x9ad3c0
+            |          _PyNumber_Index
+            |          
+             --0.57%--0x9af720
+                       _PyNumber_Index
+
+     1.16%     1.16%  python3-dbg  python3.10d           [.] list_item.lto_priv.0
+            |
+            ---list_item.lto_priv.0
+
+     1.14%     1.12%  python3-dbg  python3.10d           [.] PyNumber_Multiply
+     1.09%     1.09%  python3-dbg  python3.10d           [.] list_subscript.lto_priv.0
+            |          
+             --0.77%--0x9af720
+                       list_subscript.lto_priv.0
+
+     1.06%     0.00%  python3-dbg  [unknown]             [.] 0x097d087d077d067d
+            |
+            ---0x97d087d077d067d
+               |          
+                --0.73%--listiter_next.lto_priv.0
+
+     0.98%     0.98%  python3-dbg  python3.10d           [.] listiter_next.lto_priv.0
+            |          
+             --0.73%--0x97d087d077d067d
+                       listiter_next.lto_priv.0
+
+     0.95%     0.00%  python3-dbg  [unknown]             [.] 0x127d001400130164
+            |
+            ---0x127d001400130164
+
+     0.95%     0.00%  python3-dbg  [unknown]             [.] 0x137d0014127c097c
+            |
+            ---0x137d0014127c097c
+
+     0.94%     0.94%  python3-dbg  python3.10d           [.] PyTuple_GetItem
+     0.94%     0.94%  python3-dbg  python3.10d           [.] PyLong_AsSsize_t
+            |          
+             --0.56%--0x9ad3c0
+                       PyLong_AsSsize_t
+
+     0.93%     0.00%  python3-dbg  [unknown]             [.] 0x117d00180c7c077c
+            |
+            ---0x117d00180c7c077c
+               |          
+                --0.59%--_PyEval_EvalFrameDefault
+
+     0.90%     0.00%  python3-dbg  [unknown]             [.] 0x003c000300380014
+            |
+            ---0x3c000300380014
+               |          
+                --0.78%--_PyEval_EvalFrameDefault
+
+     0.89%     0.00%  python3-dbg  [unknown]             [.] 0x107c001900050364
+            |
+            ---0x107c001900050364
+               |          
+                --0.71%--_PyEval_EvalFrameDefault
+
+     0.87%     0.87%  python3-dbg  python3.10d           [.] float_pow.lto_priv.0
+     0.86%     0.00%  python3-dbg  [unknown]             [.] 0x00180a7c057c0e7d
+            |
+            ---0x180a7c057c0e7d
+               _PyEval_EvalFrameDefault
+
+     0.85%     0.00%  python3-dbg  [unknown]             [.] 0x0014107c107c0014
+            |
+            ---0x14107c107c0014
+               |          
+                --0.73%--_PyEval_EvalFrameDefault
+
+     0.80%     0.00%  python3-dbg  [unknown]             [.] 0x000504640d7c003c
+            |
+            ---0x504640d7c003c
+               _PyEval_EvalFrameDefault
+
+     0.80%     0.00%  python3-dbg  [unknown]             [.] 0x000300380014147c
+            |
+            ---0x300380014147c
+               _PyEval_EvalFrameDefault
+
+     0.78%     0.00%  python3-dbg  [unknown]             [.] 0x097c127d00140013
+            |
+            ---0x97c127d00140013
+               _PyEval_EvalFrameDefault
+
+     0.78%     0.00%  python3-dbg  [unknown]             [.] 0x117c001900050464
+            |
+            ---0x117c001900050464
+               |          
+                --0.68%--_PyEval_EvalFrameDefault
+
+     0.77%     0.00%  python3-dbg  [unknown]             [.] 0x00140f7c0f7c007c
+            |
+            ---0x140f7c0f7c007c
+               |          
+                --0.53%--_PyEval_EvalFrameDefault
+
+     0.76%     0.00%  python3-dbg  [unknown]             [.] 0x0a7d035c035c097d
+            |
+            ---0xa7d035c035c097d
+               _PyEval_EvalFrameDefault
+
+     0.73%     0.00%  python3-dbg  [unknown]             [.] 0x147c107c00190005
+            |
+            ---0x147c107c00190005
+
+     0.70%     0.00%  python3-dbg  [unknown]             [.] 0x00380014147c0f7c
+            |
+            ---0x380014147c0f7c
+
+     0.66%     0.00%  python3-dbg  [unknown]             [.] 0x137c107c00190005
+            |
+            ---0x137c107c00190005
+
+     0.65%     0.65%  python3-dbg  python3.10d           [.] PyNumber_InPlaceAdd
+     0.64%     0.00%  python3-dbg  [unknown]             [.] 0x00170014107c107c
+            |
+            ---0x170014107c107c
+
+     0.63%     0.00%  python3-dbg  [unknown]             [.] 0x127c0e7c137d0014
+            |
+            ---0x127c0e7c137d0014
+
+     0.61%     0.00%  python3-dbg  [unknown]             [.] 0x137c0f7c00190005
+            |
+            ---0x137c0f7c00190005
+
+     0.60%     0.00%  python3-dbg  [unknown]             [.] 0x177d167d035c157d
+            |
+            ---0x177d167d035c157d
+               _PyEval_EvalFrameDefault
+
+     0.60%     0.00%  python3-dbg  [unknown]             [.] 0x00370014137c117c
+            |
+            ---0x370014137c117c
+
+     0.59%     0.00%  python3-dbg  [unknown]             [.] 0x035c035c097d087d
+            |
+            ---0x35c035c097d087d
+               _PyEval_EvalFrameDefault
+
+     0.59%     0.00%  python3-dbg  [unknown]             [.] 0x0014117c117c0017
+            |
+            ---0x14117c117c0017
+               _PyEval_EvalFrameDefault
+
+     0.58%     0.00%  python3-dbg  [unknown]             [.] 0x00380014147c117c
+            |
+            ---0x380014147c117c
+               |          
+                --0.54%--_PyEval_EvalFrameDefault
+
+     0.58%     0.00%  python3-dbg  [unknown]             [.] 0x0f7c0f7c007c117d
+            |
+            ---0xf7c0f7c007c117d
+
+     0.58%     0.00%  python3-dbg  [unknown]             [.] 0x157d035c265d0044
+            |
+            ---0x157d035c265d0044
+
+     0.57%     0.00%  python3-dbg  [unknown]             [.] 0x001900050264087c
+            |
+            ---0x1900050264087c
+
+     0.57%     0.00%  python3-dbg  [unknown]             [.] 0x0464087c003c0003
+            |
+            ---0x464087c003c0003
+               |          
+                --0.52%--_PyEval_EvalFrameDefault
+
+     0.55%     0.00%  python3-dbg  [unknown]             [k] 0000000000000000
+            |
+            ---0
+
+     0.54%     0.00%  python3-dbg  [unknown]             [.] 0x0a7c057c0e7d0d7d
+            |
+            ---0xa7c057c0e7d0d7d
+               _PyEval_EvalFrameDefault
+
+     0.54%     0.00%  python3-dbg  [unknown]             [.] 0x0014001301640017
+            |
+            ---0x14001301640017
+
+     0.52%     0.00%  python3-dbg  [unknown]             [.] 0x00370014137c107c
+            |
+            ---0x370014137c107c
+               _PyEval_EvalFrameDefault
+
+     0.52%     0.00%  python3-dbg  [unknown]             [.] 0x00370014137c0f7c
+            |
+            ---0x370014137c0f7c
+
+     0.52%     0.00%  python3-dbg  [unknown]             [.] 0x00050464087c003c
+            |
+            ---0x50464087c003c
+               _PyEval_EvalFrameDefault
+
+     0.51%     0.00%  python3-dbg  [unknown]             [.] 0x0f7c001900050264
+            |
+            ---0xf7c001900050264
+
+
+
+#
+# (Cannot load tips.txt file, please install perf!)
+#
