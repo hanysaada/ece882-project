@@ -1,0 +1,37 @@
+nbody final comparison -- which file to cite
+
+PRIMARY (produced by the graded run_final.sh, so script_nbody.sh reproduces it):
+  nbody_final_kvm0921.txt   (2026-09-21, session tag kvm0921)
+  3 interleaved rounds, -p 60 -n 5, 2 vCPU, shipped bm_nbody_opt (= v4_struct)
+  107 ms -> 96.7 ms = 1.11x   (mean 1.11x, median 106 -> 95.4 = 1.11x,
+                               minimum 98.1 -> 87.3 = 1.12x)
+  Licensed by nbody_noise_floor_kvm0921.txt, "not significant", same session.
+  nbody_session_kvm0921.txt proves same boot: one boot_id on every line,
+  floor 09:22:13-09:25:05Z, final 09:25:05-09:31:48Z.
+
+CORROBORATING -- an independent session, same code:
+
+  nbody_v4_final_kvm.txt   (2026-09-20)
+  pristine baseline vs nbody_v4_struct, 3 interleaved rounds, -p 60 -n 5, 2 vCPU
+  101 ms -> 89.9 ms = 1.12x   (mean, median and minimum all agree at ~1.12x)
+  Same session and settings as nbody_noise_floor_kvm.txt, which is "not significant".
+  benchmarks/bm_nbody_opt/run_benchmark.py (repo 531d675) is BYTE-IDENTICAL to
+  benchmarks/ablation/nbody_v4_struct.py (md5 b651647ee14271b91d66dd6f39549226),
+  so this is the measurement of the shipped optimized nbody.
+
+DO NOT CITE: nbody_final_noisy_20260921_kvm.txt   (2026-09-21, run_final.sh)
+  Same code and settings, but the whole machine ran ~45% slower that day
+  (baseline median 147 ms vs 101 ms) with a 21% stdev and a 500 ms maximum.
+  Its speedup estimates disagree with each other (mean 1.20x, median 1.15x,
+  minimum 1.09x), and no noise floor was taken in that session to license it.
+  Kept for transparency, not as a result.
+
+HISTORICAL: nbody_final_sqrtversion_kvm.txt -- bm_nbody_opt BEFORE v4 was
+  promoted (the pow -> sqrt rewrite): 101 ms -> 101 ms = 1.01x. Evidence for
+  the finding that the sqrt rewrite gains nothing on glibc 2.35.
+
+The optimized profile (perf/nbody_opt_dbg_kvm.folded, flamegraphs/
+nbody_opt_dbg_kvm.svg, nbody_diff_kvm.svg) was re-recorded 2026-09-21 on the
+shipped v4 code: 4K cycles samples, 211 stacks. Profiles are proportions, not
+timings. It shows the ** chain still present (3.6% of cycles), as expected
+because v4 deliberately leaves ** (-1.5) unchanged.

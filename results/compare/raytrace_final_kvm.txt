@@ -1,0 +1,43 @@
+# FINAL comparison for raytrace
+# 3 interleaved rounds of (baseline, optimized); -p 20 -n 3
+# interpreter: Python 3.10.12  (release build, asserted above)
+
++-----------+-------------------------+------------------------+
+| Benchmark | raytrace_final_base_kvm | raytrace_final_opt_kvm |
++===========+=========================+========================+
+| raytrace  | 367 ms                  | 229 ms: 1.60x faster   |
++-----------+-------------------------+------------------------+
+
+--- baseline stats ---
+Raw value minimum: 351 ms
+Raw value maximum: 460 ms
+Number of run with values: 60
+Total number of run: 63
+Minimum:         351 ms
+Median +- MAD:   364 ms +- 4 ms
+Mean +- std dev: 367 ms +- 16 ms
+Maximum:         460 ms
+  0th percentile: 351 ms (-4% of the mean) -- minimum
+  5th percentile: 355 ms (-3% of the mean)
+ 25th percentile: 360 ms (-2% of the mean) -- Q1
+ 50th percentile: 364 ms (-1% of the mean) -- median
+ 75th percentile: 369 ms (+1% of the mean) -- Q3
+ 95th percentile: 379 ms (+3% of the mean)
+100th percentile: 460 ms (+25% of the mean) -- maximum
+
+--- optimized stats ---
+Raw value minimum: 220 ms
+Raw value maximum: 281 ms
+Number of run with values: 60
+Total number of run: 63
+Minimum:         220 ms
+Median +- MAD:   229 ms +- 3 ms
+Mean +- std dev: 229 ms +- 6 ms
+Maximum:         281 ms
+  0th percentile: 220 ms (-4% of the mean) -- minimum
+  5th percentile: 222 ms (-3% of the mean)
+ 25th percentile: 225 ms (-2% of the mean) -- Q1
+ 50th percentile: 229 ms (-0% of the mean) -- median
+ 75th percentile: 232 ms (+1% of the mean) -- Q3
+ 95th percentile: 238 ms (+4% of the mean)
+100th percentile: 281 ms (+23% of the mean) -- maximum

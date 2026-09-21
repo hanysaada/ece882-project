@@ -1,0 +1,46 @@
+# INTERLEAVED comparison: pristine baseline vs nbody_v4_struct
+# 3 interleaved rounds of (baseline, v4); -p 60 -n 5
+# Same configuration as the noise floor, which reports 'not significant'.
+# interpreter: Python 3.10.12  (release build)
+# v4_struct leaves ** (-1.5) untouched: identical libm cost on both
+# sides, so the delta is purely structural.
+
++-----------+----------------------+-----------------------+
+| Benchmark | nbody_v4cmp_base_kvm | nbody_v4cmp_v4_kvm    |
++===========+======================+=======================+
+| nbody     | 101 ms               | 89.9 ms: 1.12x faster |
++-----------+----------------------+-----------------------+
+
+--- baseline stats ---
+Raw value minimum: 95.2 ms
+Raw value maximum: 245 ms
+Number of run with values: 180
+Total number of run: 183
+Minimum:         95.2 ms
+Median +- MAD:   101 ms +- 2 ms
+Mean +- std dev: 101 ms +- 3 ms
+Maximum:         123 ms
+  0th percentile: 95.2 ms (-6% of the mean) -- minimum
+  5th percentile: 97.3 ms (-4% of the mean)
+ 25th percentile: 98.9 ms (-2% of the mean) -- Q1
+ 50th percentile: 101 ms (-0% of the mean) -- median
+ 75th percentile: 102 ms (+1% of the mean) -- Q3
+ 95th percentile: 107 ms (+6% of the mean)
+100th percentile: 123 ms (+21% of the mean) -- maximum
+
+--- v4_struct stats ---
+Raw value minimum: 169 ms
+Raw value maximum: 216 ms
+Number of run with values: 180
+Total number of run: 183
+Minimum:         84.7 ms
+Median +- MAD:   89.6 ms +- 1.5 ms
+Mean +- std dev: 89.9 ms +- 2.5 ms
+Maximum:         108 ms
+  0th percentile: 84.7 ms (-6% of the mean) -- minimum
+  5th percentile: 86.6 ms (-4% of the mean)
+ 25th percentile: 88.2 ms (-2% of the mean) -- Q1
+ 50th percentile: 89.6 ms (-0% of the mean) -- median
+ 75th percentile: 91.2 ms (+1% of the mean) -- Q3
+ 95th percentile: 94.2 ms (+5% of the mean)
+100th percentile: 108 ms (+20% of the mean) -- maximum
