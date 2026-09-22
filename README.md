@@ -40,7 +40,7 @@ report_nbody.txt          the graded report, per benchmark
 report_raytrace.txt
 script_nbody.sh           run everything end-to-end, per benchmark
 script_raytrace.sh
-prompt.txt                every AI prompt used, verbatim
+prompt.txt                available AI prompt record; provenance is labeled
 
 baseline/                 UNTOUCHED copies of the original benchmarks
   bm_nbody/               + CHECKSUMS.sha256, so our edits can be diffed
@@ -313,8 +313,7 @@ design-and-analysis proposal, which is what the assignment asks for.
 
 ## AI usage
 
-AI assistance was used throughout, as the assignment permits, and every prompt is
-recorded verbatim in [`prompt.txt`](prompt.txt) with a note on what it produced.
+AI assistance was used throughout, as the assignment permits. [`prompt.txt`](prompt.txt) contains the available prompt record and explicitly distinguishes verbatim entries, reconstructed entries, grouped exchanges, and redactions. It is not a substitute for recovering any source prompts that are still available.
 
 The measurements, the decisions about what to optimize, the rejection of results that
 did not meet our own criteria, and the analysis in the reports are ours. Where a
